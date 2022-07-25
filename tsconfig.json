@@ -1,6 +1,6 @@
 {
   "compilerOptions": {
-    "outDir": "./build",
+    "outDir": "./out",
     "rootDir": "./src",
     "allowJs": true,
     "declaration": true,

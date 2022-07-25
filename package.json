@@ -2,12 +2,12 @@
     "name": "teroshdl2",
     "author": "Carlos Alberto Ruiz Naranjo <carlosruiznaranjo@gmail.com>, Ismael Perez Rojo <ismaelprojo@gmail.com >",
     "homepage": "https://terostechnology.github.io",
-    "version": "1.0.22",
+    "version": "1.0.23",
     "description": "Typescript example",
-    "main": "build/index.js",
+    "main": "out/index.js",
     "scripts": {
-        "prepublish": "npm run build",
-        "build": "tsc -b tsconfig.json",
+        "prepublish": "npm run compile",
+        "compile": "tsc -b tsconfig.json",
         "lint": "env TS_NODE_COMPILER_OPTIONS='{\"module\": \"commonjs\" }' eslint . --quiet --ext .ts",
         "test": "env TS_NODE_COMPILER_OPTIONS='{\"module\": \"commonjs\" }' mocha --colors --exlude tests/linter/linter.spec.ts --reporter mocha-multi-reporters --reporter-options configFile=config.json -r ts-node/register 'tests/**/*.ts'"
     },
