@@ -6,6 +6,7 @@
     "description": "Typescript example",
     "main": "out/index.js",
     "scripts": {
+        "generate-doc": "npx typedoc",
         "prepublish": "npm run compile",
         "compile": "tsc -b tsconfig.json",
         "lint": "env TS_NODE_COMPILER_OPTIONS='{\"module\": \"commonjs\" }' eslint . --quiet --ext .ts",

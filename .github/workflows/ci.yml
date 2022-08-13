@@ -22,7 +22,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - name: Checkout
-      uses: ${{ACTION_CHECKOUT}}
+      uses: actions/checkout@v3
     - name: Install modules
       run: npm install
     - name: Run ESLint
@@ -45,70 +45,17 @@ jobs:
     runs-on: ${{ matrix.os }}
     steps:
     - name: Checkout
-      uses: ${{ACTION_CHECKOUT}}
+      uses: actions/checkout@v3
     - name: Install modules
       run: npm install
     - name: Run unit tests
       run: npm test
     - name: Save HTML report artifact
-      uses: ${{ACTION_UPLOAD_ARTIFACT}}
+      uses: actions/upload-artifact@v3
       if: always()
       with:
         name: test-report-html-${{ matrix.os }}
         path: mochawesome-report
-
-  publish-unit-test:
-    if: always() && github.ref == 'refs/heads/main'
-    runs-on: ubuntu-20.04
-    needs: [unit-test]
-    steps:
-    - name: Checkout
-      uses: ${{ACTION_CHECKOUT}}
-    - name: Install modules
-      run: npm install
-    # ubuntu 18.04
-    - name: Download artifacts Ubuntu 18.04
-      uses: ${{ACTION_DOWNLOAD_ARTIFACT}}
-      with:
-        name: test-report-html-ubuntu-18.04
-        path: test-report-html-ubuntu-18.04
-    # ubuntu 20.04
-    - name: Download artifacts Ubuntu 20.04
-      uses: ${{ACTION_DOWNLOAD_ARTIFACT}}
-      with:
-        name: test-report-html-ubuntu-20.04
-        path: test-report-html-ubuntu-20.04
-    # ubuntu 22.04
-    - name: Download artifacts Ubuntu 22.04
-      uses: ${{ACTION_DOWNLOAD_ARTIFACT}}
-      with:
-        name: test-report-html-ubuntu-22.04
-        path: test-report-html-ubuntu-22.04
-    # macos-latest
-    - name: Download artifacts macos-latest
-      uses: ${{ACTION_DOWNLOAD_ARTIFACT}}
-      with:
-        name: test-report-html-macos-latest
-        path: test-report-html-macos-latest
-    # windows-latest
-    - name: Download artifacts windows-latest
-      uses: ${{ACTION_DOWNLOAD_ARTIFACT}}
-      with:
-        name: test-report-html-windows-latest
-        path: test-report-html-windows-latest
-    - name: Rename directories
-      run: |
-        mv test-report-html-ubuntu-18.04 docs
-        mv test-report-html-ubuntu-20.04 docs
-        mv test-report-html-ubuntu-22.04 docs
-        mv test-report-html-macos-latest docs
-        mv test-report-html-windows-latest docs
-        sed -i 's/commit_hash/'$GITHUB_SHA'/' docs/index.html
-    - name: '🚀 Deploy'
-      uses: JamesIves/github-pages-deploy-action@4.1.4
-      with:
-        branch: gh-pages
-        folder: docs
 
   ##############################################################################
   # Documentation
@@ -116,16 +63,99 @@ jobs:
   generate-api-doc:
     if: always()
     runs-on: ubuntu-20.04
-    needs: [unit-test]
     steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Install modules
+        run: npm install
       - name: Generate doc
         run: |
-          npx typedoc
+          npm run-script generate-doc
       - name: Save documentation
-        uses: ${{ACTION_UPLOAD_ARTIFACT}}
+        uses: actions/upload-artifact@v3
         with:
           name: api-doc
-          path: out_docs
+          path: out_doc_api
+
+  ##############################################################################
+  # Publish documentation
+  ##############################################################################
+  create-doc:
+    if: always()
+    runs-on: ubuntu-20.04
+    needs: [unit-test, generate-api-doc]
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v3
+    - name: Install modules
+      run: npm install
+    # ubuntu 18.04
+    - name: Download artifacts Ubuntu 18.04
+      uses: actions/download-artifact@v3
+      with:
+        name: test-report-html-ubuntu-18.04
+        path: test-report-html-ubuntu-18.04
+    # ubuntu 20.04
+    - name: Download artifacts Ubuntu 20.04
+      uses: actions/download-artifact@v3
+      with:
+        name: test-report-html-ubuntu-20.04
+        path: test-report-html-ubuntu-20.04
+    # ubuntu 22.04
+    - name: Download artifacts Ubuntu 22.04
+      uses: actions/download-artifact@v3
+      with:
+        name: test-report-html-ubuntu-22.04
+        path: test-report-html-ubuntu-22.04
+    # macos-latest
+    - name: Download artifacts macos-latest
+      uses: actions/download-artifact@v3
+      with:
+        name: test-report-html-macos-latest
+        path: test-report-html-macos-latest
+    # windows-latest
+    - name: Download artifacts windows-latest
+      uses: actions/download-artifact@v3
+      with:
+        name: test-report-html-windows-latest
+        path: test-report-html-windows-latest
+    # api-doc
+    - name: Download artifacts api-doc
+      uses: actions/download-artifact@v3
+      with:
+        name: api-doc
+        path: api-doc
+    - name: Rename directories
+      run: |
+        mv test-report-html-ubuntu-18.04 docs
+        mv test-report-html-ubuntu-20.04 docs
+        mv test-report-html-ubuntu-22.04 docs
+        mv test-report-html-macos-latest docs
+        mv test-report-html-windows-latest docs
+        mv api-doc docs
+        sed -i 's/commit_hash/'$GITHUB_SHA'/' docs/index.html
+    - name: Save HTML documentation
+      uses: actions/upload-artifact@v3
+      with:
+        name: doc-web
+        path: docs
+
+  publish-doc:
+    if: always() && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-20.04
+    needs: [create-doc]
+    steps:
+    - name: Download doc artifact
+      uses: actions/download-artifact@v3
+      with:
+        name: doc-web
+        path: doc-web
+    - name: '🚀 Deploy'
+      if: github.ref == 'refs/heads/main'
+      uses: JamesIves/github-pages-deploy-action@4.1.4
+      with:
+        branch: gh-pages
+        folder: doc-web
 
   ##############################################################################
   # Publish package
@@ -136,7 +166,7 @@ jobs:
     needs: [unit-test]
     steps:
       - name: Checkout
-        uses: ${{ACTION_CHECKOUT}}
+        uses: actions/checkout@v3
       - name: Set node enviroment
         uses: actions/setup-node@v3
         with:

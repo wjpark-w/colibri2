@@ -2,7 +2,7 @@
     "entryPoints": [
         "src/index.ts"
     ],
-    "out": "out_docs",
+    "out": "out_doc_api",
     "plugin": [
         "typedoc-theme-hierarchy"
     ],

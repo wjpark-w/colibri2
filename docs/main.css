@@ -172,6 +172,10 @@ a {
     ;
 }
 
+.book {
+    background-image: url("./book.png");
+    ;
+}
 
 p {
     padding-bottom: 10px;
