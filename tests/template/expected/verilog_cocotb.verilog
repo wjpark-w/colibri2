@@ -7,14 +7,18 @@ from cocotb.regression import TestFactory
 async def run_test(dut):
   PERIOD = 10
 
-  dut.g = 0
-  dut.h = 0
-  dut.i = 0
+  dut.a = 0
+  dut.b = 0
+  dut.c = 0
+  dut.d = 0
+  dut.e = 0
   await Timer(20*PERIOD, units='ns')
 
-  dut.g = 1
-  dut.h = 1
-  dut.i = 1
+  dut.a = 1
+  dut.b = 1
+  dut.c = 1
+  dut.d = 1
+  dut.e = 1
   await Timer(20*PERIOD, units='ns')
 
 # Register the test.

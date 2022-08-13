@@ -16,7 +16,7 @@
       "skipFiles": [
         "<node_internals>/**/*.js"
       ],
-      // "preLaunchTask": "npm: build"
+      // "preLaunchTask": "npm: compile"
       // "smartStep": true
     },
     // To debug, make sure a *.spec.ts file is active in the editor, then run a configuration
@@ -35,7 +35,7 @@
       "skipFiles": [
         "<node_internals>/**/*.js"
       ],
-      "preLaunchTask": "npm: build"
+      "preLaunchTask": "npm: compile"
       // "smartStep": true
     },
     {

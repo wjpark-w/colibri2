@@ -51,7 +51,15 @@ end e_arch;
 `;
 
 const verilog_code = `
-
+module test_entity_name (a, b, c, d, e);  
+    parameter PARAM_CNT_0 = 8;
+    parameter PARAM_CNT_1 = 7;
+    input [3:0] a;           
+    input b = 0;  
+    output [3:0] c;   
+    output d;
+    inout e;
+endmodule  
 `;
 
 const C_OUTPUT_BASE_PATH = paht_lib.join(__dirname, 'out');
@@ -62,30 +70,35 @@ async function generate_template_manager(language: HDL_LANG) {
     return template_manager;
 }
 
-const language_array = [HDL_LANG.VHDL];
+const language_array = [HDL_LANG.VHDL, HDL_LANG.VERILOG];
 
 language_array.forEach(language => {
-    describe('Check template VHDL element', function () {
-        const values = Object.values(common.TEMPLATE_NAME);
+    describe(`Check template ${language} element`, function () {
+        const values = Object.values(common.get_template_names(language));
         values.forEach(template_type => {
-            it(`Check ${template_type}`, async function () {
+            it(`Check ${template_type.id}`, async function () {
                 let code_hdl = verilog_code;
                 if (language === HDL_LANG.VHDL) {
                     code_hdl = vhdl_code;
                 }
+                else {
+                    code_hdl = verilog_code;
+                }
 
                 const options: common.t_options = {
                     header_file_path: "",
-                    indent_char: "  "
+                    indent_char: "  ",
+                    instance_style: common.TYPE_INSTANCE_DECLARATION.INLINE,
+                    clock_generation_style: common.TYPE_CLOCK_GENERATION_STYLE.IFELSE
                 };
 
                 const template_manager = await generate_template_manager(language);
-                const template = await template_manager.generate(code_hdl, template_type, options);
-                const output_path = paht_lib.join(C_OUTPUT_BASE_PATH, `${language}_${template_type}.${language}`);
+                const template = await template_manager.generate(code_hdl, template_type.id, options);
+                const output_path = paht_lib.join(C_OUTPUT_BASE_PATH, `${language}_${template_type.id}.${language}`);
                 fs.writeFileSync(output_path, template);
 
                 //Get exepcted template
-                const input_path = paht_lib.join(__dirname, 'expected', `${language}_${template_type}.${language}`);
+                const input_path = paht_lib.join(__dirname, 'expected', `${language}_${template_type.id}.${language}`);
                 const expected = fs.readFileSync(input_path);
 
                 equal(template, expected);

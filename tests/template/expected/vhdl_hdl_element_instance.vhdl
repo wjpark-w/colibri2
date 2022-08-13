@@ -1,4 +1,4 @@
-test_entity_name_inst : test_entity_name
+test_entity_name_inst : entity work.test_entity_name
   generic map (
     a => a,
     b => b,

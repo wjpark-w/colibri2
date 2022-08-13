@@ -7,9 +7,8 @@ test_entity_name
     .e(e),
     .f(f)
   )
-
-  test_entity_name_dut (
-    g(g),
-    h(h),
-    i(i)
+  test_entity_name_inst (
+    .g(g),
+    .h(h),
+    .i(i)
   );

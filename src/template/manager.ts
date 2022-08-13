@@ -23,6 +23,7 @@ import * as nunjucks from 'nunjucks';
 import { HDL_LANG } from "../common/general";
 import * as common from "./common";
 import * as parser_lib from "../parser/factory";
+import * as common_hdl from "../parser/common";
 
 /** Template */
 export class Template_manager {
@@ -42,6 +43,11 @@ export class Template_manager {
         this.language = language;
     }
 
+
+    /**
+     * Get the text header from a file path
+     * @param  {string} header_file_path File path with the header
+     */
     private get_header(header_file_path: string) {
         if (header_file_path === '') {
             return '';
@@ -64,6 +70,11 @@ export class Template_manager {
         }
     }
 
+
+    /**
+     * Gen indent
+     * @param  {string} indent_char Indent character
+     */
     private get_indent(indent_char: string) {
         const indent = ['', '', '', '', '', ''];
 
@@ -76,7 +87,10 @@ export class Template_manager {
         }
         return indent;
     }
-
+    /**
+     * Parse the code
+     * @param  {string} code Text code
+     */
     private async parse(code: string) {
         const parser_f = new parser_lib.Factory();
         const parser = await parser_f.get_parser(this.language);
@@ -88,13 +102,14 @@ export class Template_manager {
         }
         return code_tree;
     }
+
     /**
      * Generate a template from HDL code
      * @param  {string} code HDL code
      * @param  {common.TEMPLATE_NAME} template_type Template type
      * @param  {common.t_options} options Template options
      */
-    public async generate(code: string, template_type: common.TEMPLATE_NAME, options: common.t_options) {
+    async generate(code: string, template_type: string, options: common.t_options) {
         let template = '';
         const code_tree = await this.parse(code);
         if (code_tree === undefined) {
@@ -112,14 +127,110 @@ export class Template_manager {
         const template_path = paht_lib.join(__dirname, 'helpers', norm_language, `${template_type}.nj`);
 
         const name = code_tree.name;
-        const generic = code_tree.get_generic_array();
-        const port = code_tree.get_port_array();
+        const generic = this.adapt_port(code_tree.get_generic_array(), template_type, true);
+        const port = this.adapt_port(code_tree.get_port_array(), template_type, false);
 
         template = nunjucks.render(template_path, {
             indent: indent, header: header, name: name,
-            generic: generic, port: port
+            generic: generic, port: port,
+            clock_style: options.clock_generation_style,
+            instance_style: options.instance_style
         });
 
         return template;
+    }
+    /**
+     * Adapt the ports/generics from VHDL/Verilog to Verilog/VHDL. It useful for mix templates
+     * @param  {common_hdl.Port_hdl[]} port_list List of ports
+     * @param  {string} template_type Type of template
+     * @param  {boolean} is_generic Genercis enable
+     */
+    private adapt_port(port_list: common_hdl.Port_hdl[], template_type: string, is_generic: boolean)
+        : common_hdl.Port_hdl[] {
+
+        if (this.language === HDL_LANG.VHDL && template_type.includes("mix")) {
+            return this.adapt_port_to_verilog(port_list, is_generic);
+        }
+        else if ((this.language === HDL_LANG.VERILOG || this.language === HDL_LANG.SYSTEMVERILOG)
+            && template_type.includes("mix")) {
+            return this.adapt_port_to_vhdl(port_list, is_generic);
+        }
+
+        return port_list;
+    }
+
+    private adapt_port_to_vhdl(port_list: common_hdl.Port_hdl[], is_generic: boolean): common_hdl.Port_hdl[] {
+        port_list.forEach(port_inst => {
+            //Adapt direction
+            const direction = port_inst.direction;
+            if (direction === 'input') {
+                port_inst.direction = 'in';
+            }
+            else if (direction === 'output') {
+                port_inst.direction = 'out';
+            }
+            else if (direction === 'inout') {
+                port_inst.direction = 'inout';
+            }
+
+            //Adapt type
+            const type = port_inst.type;
+            if (type === '' || type === 'wire' || type === 'reg') {
+                port_inst.type = 'std_logic';
+            } else if (type.includes('[')) {
+                port_inst.type = type.replace('[', '(').replace(']', ')').replace('wire', '').replace('reg', '');
+                port_inst.type = `std_logic_vector ${port_inst.type.replace(':', ' downto ')}`;
+            } else {
+                port_inst.type = type;
+            }
+
+            //Adapt generic
+            if (is_generic === true) {
+                port_inst.type = "integer";
+                if (port_inst.default_value === "") {
+                    port_inst.default_value = "0";
+                }
+            }
+        });
+        return port_list;
+    }
+
+    private adapt_port_to_verilog(port_list: common_hdl.Port_hdl[], is_generic: boolean): common_hdl.Port_hdl[] {
+        port_list.forEach(port_inst => {
+            //Adapt direction
+            const direction = port_inst.direction;
+            if (direction === 'in') {
+                port_inst.direction = 'input';
+            }
+            else if (direction === 'out') {
+                port_inst.direction = 'output';
+            }
+            else if (direction === 'inout') {
+                port_inst.direction = 'inout';
+            }
+
+            //Adapt type
+            const type = port_inst.type;
+            if (type === '' || type === 'std_logic') {
+                port_inst.type = 'reg';
+            } else if (type.includes('(')) {
+                port_inst.type = type.replace('(', '[').replace(')', ']');
+                port_inst.type = port_inst.type.replace('std_logic', '');
+                port_inst.type = port_inst.type.replace('std_logic_vector', '');
+                port_inst.type = port_inst.type.replace('signed', '');
+                port_inst.type = port_inst.type.replace('unsigned', '');
+                port_inst.type = `reg ${port_inst.type.replace('downto', ':')}`;
+            } else {
+                port_inst.type = type;
+            }
+            //Adapt generic
+            if (is_generic === true) {
+                port_inst.type = "";
+                if (port_inst.default_value === "") {
+                    port_inst.default_value = "0";
+                }
+            }
+        });
+        return port_list;
     }
 }
