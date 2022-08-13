@@ -145,6 +145,8 @@ jobs:
     runs-on: ubuntu-20.04
     needs: [create-doc]
     steps:
+    - name: Checkout
+      uses: actions/checkout@v3
     - name: Download doc artifact
       uses: actions/download-artifact@v3
       with:
