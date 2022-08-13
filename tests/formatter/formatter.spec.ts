@@ -124,7 +124,7 @@ describe('Check s3sv formatter', function () {
     const formatter_name = common.FORMATTER_NAME.S3SV;
 
     const system_os = get_os();
-    if (system_os === common_process.OS.WINDOWS) {
+    if (system_os === common_process.OS.WINDOWS || system_os === common_process.OS.MAC) {
         this.timeout(5000);
     }
 

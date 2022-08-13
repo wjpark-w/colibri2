@@ -4,15 +4,20 @@ import * as paht_lib from 'path';
 import * as common_documenter from "../../src/documenter/common";
 import { Documenter } from "../../src/documenter/documenter";
 import { HDL_LANG } from "../../src/common/general";
-// import { equal } from "assert";
+import * as common_process from "../../src/process/common";
+import { get_os } from "../../src/process/utils";
 
 const C_OUTPUT_BASE_PATH = paht_lib.join(__dirname, 'complete');
 
 const output_types = [common_documenter.doc_output_type.HTML, common_documenter.doc_output_type.MARKDOWN];
-// const output_types = [common_documenter.doc_output_type.HTML];
 
 output_types.forEach(output_type_inst => {
     describe(`Check documenter creator with ${output_type_inst}`, function () {
+
+        const system_os = get_os();
+        if (system_os === common_process.OS.WINDOWS || system_os === common_process.OS.MAC) {
+            this.timeout(5000);
+        }
 
         it(`Entity VHDL`, async function () {
             const hdl_lang = HDL_LANG.VHDL;
