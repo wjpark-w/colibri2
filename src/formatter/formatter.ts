@@ -32,7 +32,7 @@ export class Formatter {
     /**
      * @param  {common.FORMATTER_NAME} formatter_name Formatter name
      */
-    constructor(formatter_name: common.FORMATTER_NAME) {
+    constructor(formatter_name: string) {
         if (formatter_name === common.FORMATTER_NAME.STANDALONE_VHDL) {
             this.formatter_inst = new Standalone_vhdl();
         }

@@ -20,41 +20,50 @@ import { HDL_LANG } from "../common/general";
 /** Templates types for VHDL */
 export class TEMPLATE_NAME_VHDL {
     static readonly COCOTB = {
+        name: "cocotb",
         id: "cocotb",
         description: "cocotb"
     };
 
     static readonly TESTBENCH_NORMAL = {
+        name: "testbench",
         id: "testbench_normal",
         description: "Verilog testbench"
     };
     static readonly TESTBENCH_VUNIT = {
+        name: "vunit_testbench",
         id: "testbench_vunit",
         description: "VUnit testbench"
     };
 
     static readonly HDL_ELEMENT_COMPONENT = {
+        name: "component",
         id: "hdl_element_component",
         description: "Copy as component"
     };
     static readonly HDL_ELEMENT_INSTANCE = {
+        name: "instance",
         id: "hdl_element_instance",
         description: "Copy as instance"
     };
     static readonly HDL_ELEMENT_SIGNAL = {
+        name: "signal",
         id: "hdl_element_signal",
         description: "Copy as signal"
     };
 
     static readonly HDL_ELEMENT_MIX_INSTANCE = {
+        name: "mix_instance",
         id: "hdl_element_mix_instance",
         description: "Copy as Verilog instance"
     };
     static readonly HDL_ELEMENT_MIX_TESTBENCH_NORMAL = {
+        name: "mix_testbench",
         id: "hdl_element_mix_testbench_normal",
         description: "Copy as Verilog testbench"
     };
     static readonly HDL_ELEMENT_MIX_TESTBENCH_VUNIT = {
+        name: "mix_vunit_testbench",
         id: "hdl_element_mix_testbench_vunit",
         description: "Copy as Verilog VUnit testbench"
     };
@@ -71,35 +80,43 @@ export class TEMPLATE_NAME_VHDL {
 /** Templates types for Verilog/SV */
 export class TEMPLATE_NAME_VERILOG {
     static readonly COCOTB = {
+        name: "cocotb",
         id: "cocotb",
         description: "cocotb"
     };
     static readonly TESTBENCH_NORMAL = {
+        name: "testbench",
         id: "testbench_normal",
         description: "Verilog testbench"
     };
     static readonly TESTBENCH_VUNIT = {
+        name: "vunit_testbench",
         id: "testbench_vunit",
         description: "Vunit testbench"
     };
     static readonly HDL_ELEMENT_INSTANCE = {
+        name: "instance",
         id: "testbench_vunit",
         description: "Copy as instance"
     };
     static readonly HDL_ELEMENT_SIGNAL = {
+        name: "signal",
         id: "hdl_element_signal",
         description: "Copy as signal"
     };
 
     static readonly HDL_ELEMENT_MIX_INSTANCE = {
+        name: "mix_instance",
         id: "hdl_element_mix_instance",
         description: "Copy as VHDL instance"
     };
     static readonly HDL_ELEMENT_MIX_TESTBENCH_NORMAL = {
+        name: "mix_testbench",
         id: "hdl_element_mix_testbench_normal",
         description: "Copy as VHDL testbench"
     };
     static readonly HDL_ELEMENT_MIX_TESTBENCH_VUNIT = {
+        name: "mix_vunit_testbench",
         id: "hdl_element_mix_testbench_vunit",
         description: "Copy as VHDL VUnit testbench"
     };

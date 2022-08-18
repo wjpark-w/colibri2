@@ -29,7 +29,7 @@ architecture bench of test_entity_name_tb is
   signal i : std_logic;
 begin
 
-test_entity_name_inst : entity work.test_entity_name
+  test_entity_name_inst : entity work.test_entity_name
   generic map (
     a => a,
     b => b,

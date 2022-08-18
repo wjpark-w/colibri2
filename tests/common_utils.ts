@@ -15,6 +15,7 @@
 //
 // You should have received a copy of the GNU General Public License
 // along with colibri2.  If not, see <https://www.gnu.org/licenses/>.
+import * as file_utils from '../src/utils/file_utils';
 
 export function normalize_breakline_windows(txt: string): string {
     if (process.platform === 'win32') {
@@ -24,3 +25,12 @@ export function normalize_breakline_windows(txt: string): string {
         return txt;
     }
 }
+/**
+ * Delete and create the directory
+ * @param  {string} path_dir Path directory
+ */
+export function setup_folder(path_dir: string) {
+    file_utils.remove_directory(path_dir);
+    file_utils.create_directory(path_dir);
+}
+

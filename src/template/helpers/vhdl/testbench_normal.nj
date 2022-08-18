@@ -17,8 +17,11 @@ architecture bench of {{ name }}_tb is
 {% for port_inst in port -%}
 {{ indent[1] }}signal {{port_inst['info']['name']}} : {{port_inst['type']}};
 {% endfor -%}
+{% if instance_style == "separate" %}
+{{ indent[1] }}{% include "./hdl_element_component.nj" %}
+{% endif -%}
 begin
 
-{% include "./hdl_element_instance.nj" %}
+{{ indent[1] }}{% include "./hdl_element_instance.nj" %}
 {% include "./clock.nj" %}
 end;

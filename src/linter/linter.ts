@@ -34,7 +34,7 @@ export class Linter {
     /**
      * @param  {common.LINTER_NAME} linter_name Linter name
      */
-    constructor(linter_name: common.LINTER_NAME) {
+    constructor(linter_name: string) {
         if (linter_name === common.LINTER_NAME.GHDL) {
             this.linter_inst = new Ghdl();
         }

@@ -39,50 +39,36 @@ export class Ghdl extends Base_linter {
             const errors: common.l_error[] = [];
             file = file.replace(/\\ /g, ' ');
             const errors_str = result.stderr;
-            const errors_str_lines = errors_str.split(/\r?\n/g);
-            errors_str_lines.forEach((line: string) => {
-                if (line.startsWith(file)) {
-                    line = line.replace(file, '');
-                    const terms = line.split(':');
-                    const line_num = parseInt(terms[1].trim());
-                    const column_num = parseInt(terms[2].trim());
-                    if (terms.length === 4) {
-                        const error: common.l_error = {
-                            severity: common.LINTER_ERROR_SEVERITY.ERROR,
-                            description: terms[3].trim(),
-                            code: '',
-                            location: {
-                                file: file,
-                                position: [line_num - 1, column_num - 1]
-                            }
-                        };
-                        errors.push(error);
-                    }
-                    else if (terms.length >= 4) {
-                        let sev;
-                        if (terms[2].trim() === 'error') {
-                            sev = common.LINTER_ERROR_SEVERITY.ERROR;
-                        }
-                        else if (terms[2].trim() === 'warning') {
-                            sev = common.LINTER_ERROR_SEVERITY.WARNING;
-                        }
-                        else {
-                            sev = common.LINTER_ERROR_SEVERITY.ERROR;
-                        }
-                        const error: common.l_error = {
-                            severity: sev,
-                            description: terms[3].trim(),
-                            code: '',
-                            location: {
-                                file: file,
-                                position: [line_num - 1, column_num - 1]
-                            }
-                        };
 
-                        errors.push(error);
-                    }
+
+            // eslint-disable-next-line max-len
+            const regex = /^(?<filename>.*):(?=\d)(?<line_number>\d+):(?<column_number>\d+):((?<is_warning>warning:)\s*|\s*)(?<error_message>.*)/gm;
+            let m;
+            while ((m = regex.exec(errors_str)) !== null) {
+                // This is necessary to avoid infinite loops with zero-width matches
+                if (m.index === regex.lastIndex) {
+                    regex.lastIndex++;
                 }
-            });
+
+                const line = parseInt(<string>m.groups?.line_number.trim());
+                const column = parseInt(<string>m.groups?.column_number.trim());
+                let severity = common.LINTER_ERROR_SEVERITY.ERROR;
+                if (m.groups?.is_warning !== undefined) {
+                    severity = common.LINTER_ERROR_SEVERITY.WARNING;
+                }
+
+                const error: common.l_error = {
+                    severity: severity,
+                    description: <string>m.groups?.error_message.trim(),
+                    code: '',
+                    location: {
+                        file: file,
+                        position: [line - 1, column - 1]
+                    }
+                };
+
+                errors.push(error);
+            }
             return errors;
         } catch (error) {
             return [];

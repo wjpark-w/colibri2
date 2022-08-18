@@ -25,7 +25,7 @@ function check_python_system_path(current_path: string) {
     const os = process.platform;
     let expected_list: string[] = [];
     if (os === 'darwin') {
-        expected_list = ['/usr/local/opt/python@3.9/bin/python3.9'];
+        expected_list = ['/usr/local/opt/python@3.10/bin/python3.10'];
     }
     else if (os === 'win32') {
         expected_list = ["C:\\hostedtoolcache\\windows\\Python\\3.9.13\\x64\\python.exe",

@@ -33,6 +33,11 @@ Colibri2 is a TypeScript library to work with HDL (VHDL, Verilog and SV). It's t
 
 - [Testing plan](./docs/testing_plan.md)
 
+## Command line
+
+- [Command line](./docs/command_line.md)
+
+
 ## Managed by
 
 - [Carlos Alberto Ruiz](https://www.linkedin.com/in/carlos-alberto-ruiz-fpga/): carlosruiznaranjo@gmail.com 

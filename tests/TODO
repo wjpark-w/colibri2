@@ -13,3 +13,13 @@
 - Documenter section test fsm
 - Documenter section test custom section
 - Verilog template check
+- GHDL linter falla cuando la descripción tiene ":"
+
+/home/carlos/repo/colibri2/tests/command/linter/helpers/sample_0.vhd:13:19:error: ':' is expected instead of ';'
+/home/carlos/repo/colibri2/tests/command/linter/helpers/sample_0.vhd:13:19:error: type mark expected in a subtype indication
+/home/carlos/repo/colibri2/tests/command/linter/helpers/sample_0.vhd:18:1:error: '<=' is expected instead of 'end'
+/home/carlos/repo/colibri2/tests/command/linter/helpers/sample_0.vhd:18:1:error: primary expression expected
+/home/carlos/repo/colibri2/tests/command/linter/helpers/sample_0.vhd:16:20:error: ';' expected at end of signal assignment
+/home/carlos/repo/colibri2/tests/command/linter/helpers/sample_0.vhd:16:20:error: (found: 'end')
+
+- Añadir un logger global

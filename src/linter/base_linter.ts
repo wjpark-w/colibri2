@@ -22,8 +22,8 @@ import { Process } from "../process/process";
 import * as common from "./common";
 import { get_os } from "../process/utils";
 import { OS } from "../process/common";
-const path_lib = require('path');
-
+import * as path_lib from "path";
+import * as logger from "../logger/logger";
 
 export abstract class Base_linter {
     abstract binary_linux: string;
@@ -72,9 +72,10 @@ export abstract class Base_linter {
     async exec_linter(file: string, options: common.l_options) {
         this.delete_previus_lint();
         const command = this.get_command(file, options);
-        // eslint-disable-next-line no-console
-        console.log(`[colibri][info] Linting with command: ${command} `);
 
+        const msg = `Linting with command: ${command} `;
+        // eslint-disable-next-line no-console
+        logger.Logger.log(msg, logger.T_SEVERITY.INFO);
 
         const P = new Process();
         const result = await P.exec_wait(command);
