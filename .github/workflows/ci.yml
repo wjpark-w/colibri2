@@ -185,7 +185,7 @@ jobs:
     - name: Compile
       run: npm run compile
     - run: npm install oclif
-    - run: npx oclif help pack tarballs -r .
+    - run: npx oclif pack tarballs -r . --parallel
     - name: Save pack
       uses: actions/upload-artifact@v3
       with:

@@ -2,7 +2,7 @@
     "name": "teroshdl2",
     "author": "Carlos Alberto Ruiz Naranjo <carlosruiznaranjo@gmail.com>, Ismael Perez Rojo <ismaelprojo@gmail.com >",
     "homepage": "https://terostechnology.github.io",
-    "version": "1.1.0",
+    "version": "1.2.0",
     "description": "Typescript example",
     "main": "out/index.js",
     "oclif": {

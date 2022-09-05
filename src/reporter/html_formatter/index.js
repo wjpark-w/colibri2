@@ -239,7 +239,7 @@ function messageTemplate(it) {
      <td class="clr-${severityNumber}">${severityName}</td>
      <td>${encodeHTML(message)}</td>
      <td>
-         <a href="${ruleUrl ? ruleUrl : ""}" target="_blank" rel="noopener noreferrer">${ruleId ? ruleId : ""}</a>
+         ${ruleId ? ruleId : ""}
      </td>
  </tr>
  `.trimLeft();
