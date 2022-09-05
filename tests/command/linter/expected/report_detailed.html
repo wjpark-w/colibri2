@@ -439,9 +439,11 @@
 
 
 
-		<h1 style=' padding-left:70px;'>TerosHDL linter report - <small class="text-error">
-				error
-			</small></h1>
+		<h1 style=' padding-left:70px;'>
+			GHDL report - <small class="text-error">
+					error
+				</small>
+		</h1>
 	</div>
 
 	<div class="container">
@@ -450,7 +452,7 @@
 			<div>
 				11 problems (11 errors, 0 warnings)
 			</div>
-			<div class="row"><div class="column">
+			<!-- <div class="row"><div class="column">
 	<h3 class="text-error">Top errors</h3>
 	<table class="summary-table">
 		<thead>
@@ -505,7 +507,7 @@
 		</tbody></table>
 	</div>
 </div>
-
+ -->
 		</div>
 		<div id="details">
 			<h2 class="page-header">Details</h2>
@@ -567,56 +569,75 @@
 		<div class="tab-content">
 			<div role="tabpanel" class="tab-pane" id="detailSummary-0">
 				<div class="row"></div>
-<div class="row">
-	<h3 class="page-header">All Rules</h3>
-	<table class="summary-table">
-		<thead>
-			<tr>
-				<th>Severity</th>
-				<th>Rule</th>
-			</tr>
-		</thead>
-		<tbody>
-			<tr class="issue">
-	<td><strong class="text-error">Error<strong></td>
+	<div class="row">
+		<h3 class="page-header">All Rules</h3>
+		<table class="summary-table">
+			<thead>
+				<tr>
+					<th>Severity</th>
+					<th>Position</th>
+					<th>Message</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr class="issue">
+	<td><strong class="text-error">
+			Error<strong></td>
 	<td>
-		Row 13, Column 18: "&#39;:&#39; is expected instead of &#39;;&#39;"
-		<a href="" target="_blank">':' is expected instead of ';'</a>
+		Row 13, Column 18
+	</td>
+	<td>
+		"&#39;:&#39; is expected instead of &#39;;&#39;"
 	</td>
 </tr><tr class="issue">
-	<td><strong class="text-error">Error<strong></td>
+	<td><strong class="text-error">
+			Error<strong></td>
 	<td>
-		Row 13, Column 18: "type mark expected in a subtype indication"
-		<a href="" target="_blank">type mark expected in a subtype indication</a>
+		Row 13, Column 18
+	</td>
+	<td>
+		"type mark expected in a subtype indication"
 	</td>
 </tr><tr class="issue">
-	<td><strong class="text-error">Error<strong></td>
+	<td><strong class="text-error">
+			Error<strong></td>
 	<td>
-		Row 18, Column 0: "&#39;&lt;=&#39; is expected instead of &#39;end&#39;"
-		<a href="" target="_blank">'<=' is expected instead of 'end'</a>
+		Row 18, Column 0
+	</td>
+	<td>
+		"&#39;&lt;=&#39; is expected instead of &#39;end&#39;"
 	</td>
 </tr><tr class="issue">
-	<td><strong class="text-error">Error<strong></td>
+	<td><strong class="text-error">
+			Error<strong></td>
 	<td>
-		Row 18, Column 0: "primary expression expected"
-		<a href="" target="_blank">primary expression expected</a>
+		Row 18, Column 0
+	</td>
+	<td>
+		"primary expression expected"
 	</td>
 </tr><tr class="issue">
-	<td><strong class="text-error">Error<strong></td>
+	<td><strong class="text-error">
+			Error<strong></td>
 	<td>
-		Row 16, Column 19: "&#39;;&#39; expected at end of signal assignment"
-		<a href="" target="_blank">';' expected at end of signal assignment</a>
+		Row 16, Column 19
+	</td>
+	<td>
+		"&#39;;&#39; expected at end of signal assignment"
 	</td>
 </tr><tr class="issue">
-	<td><strong class="text-error">Error<strong></td>
+	<td><strong class="text-error">
+			Error<strong></td>
 	<td>
-		Row 16, Column 19: "(found: &#39;end&#39;)"
-		<a href="" target="_blank">(found: 'end')</a>
+		Row 16, Column 19
+	</td>
+	<td>
+		"(found: &#39;end&#39;)"
 	</td>
 </tr>
-		</tbody>
-	</table>
-</div>
+			</tbody>
+		</table>
+	</div>
 			</div>
 			<div role="tabpanel" class="tab-pane hidden" id="sourceCode-0">
 				<table class="source-code">
@@ -688,16 +709,22 @@
 </tr>
 
 <tr class="issue">
-	<td><strong class="text-error">Error<strong></td>
+	<td><strong class="text-error">
+			Error<strong></td>
 	<td>
-		Row 13, Column 18: "&#39;:&#39; is expected instead of &#39;;&#39;"
-		<a href="" target="_blank">':' is expected instead of ';'</a>
+		Row 13, Column 18
+	</td>
+	<td>
+		"&#39;:&#39; is expected instead of &#39;;&#39;"
 	</td>
 </tr><tr class="issue">
-	<td><strong class="text-error">Error<strong></td>
+	<td><strong class="text-error">
+			Error<strong></td>
 	<td>
-		Row 13, Column 18: "type mark expected in a subtype indication"
-		<a href="" target="_blank">type mark expected in a subtype indication</a>
+		Row 13, Column 18
+	</td>
+	<td>
+		"type mark expected in a subtype indication"
 	</td>
 </tr><tr class="hit bg-error">
 	<td class="line">13</td>
@@ -715,16 +742,22 @@
 </tr>
 
 <tr class="issue">
-	<td><strong class="text-error">Error<strong></td>
+	<td><strong class="text-error">
+			Error<strong></td>
 	<td>
-		Row 16, Column 19: "&#39;;&#39; expected at end of signal assignment"
-		<a href="" target="_blank">';' expected at end of signal assignment</a>
+		Row 16, Column 19
+	</td>
+	<td>
+		"&#39;;&#39; expected at end of signal assignment"
 	</td>
 </tr><tr class="issue">
-	<td><strong class="text-error">Error<strong></td>
+	<td><strong class="text-error">
+			Error<strong></td>
 	<td>
-		Row 16, Column 19: "(found: &#39;end&#39;)"
-		<a href="" target="_blank">(found: 'end')</a>
+		Row 16, Column 19
+	</td>
+	<td>
+		"(found: &#39;end&#39;)"
 	</td>
 </tr><tr class="hit bg-error">
 	<td class="line">16</td>
@@ -737,16 +770,22 @@
 </tr>
 
 <tr class="issue">
-	<td><strong class="text-error">Error<strong></td>
+	<td><strong class="text-error">
+			Error<strong></td>
 	<td>
-		Row 18, Column 0: "&#39;&lt;=&#39; is expected instead of &#39;end&#39;"
-		<a href="" target="_blank">'<=' is expected instead of 'end'</a>
+		Row 18, Column 0
+	</td>
+	<td>
+		"&#39;&lt;=&#39; is expected instead of &#39;end&#39;"
 	</td>
 </tr><tr class="issue">
-	<td><strong class="text-error">Error<strong></td>
+	<td><strong class="text-error">
+			Error<strong></td>
 	<td>
-		Row 18, Column 0: "primary expression expected"
-		<a href="" target="_blank">primary expression expected</a>
+		Row 18, Column 0
+	</td>
+	<td>
+		"primary expression expected"
 	</td>
 </tr><tr class="hit bg-error">
 	<td class="line">18</td>
@@ -803,50 +842,66 @@
 		<div class="tab-content">
 			<div role="tabpanel" class="tab-pane" id="detailSummary-1">
 				<div class="row"></div>
-<div class="row">
-	<h3 class="page-header">All Rules</h3>
-	<table class="summary-table">
-		<thead>
-			<tr>
-				<th>Severity</th>
-				<th>Rule</th>
-			</tr>
-		</thead>
-		<tbody>
-			<tr class="issue">
-	<td><strong class="text-error">Error<strong></td>
+	<div class="row">
+		<h3 class="page-header">All Rules</h3>
+		<table class="summary-table">
+			<thead>
+				<tr>
+					<th>Severity</th>
+					<th>Position</th>
+					<th>Message</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr class="issue">
+	<td><strong class="text-error">
+			Error<strong></td>
 	<td>
-		Row 23, Column 18: "no declaration for &quot;sstd_logic&quot;"
-		<a href="" target="_blank">no declaration for "sstd_logic"</a>
+		Row 23, Column 18
+	</td>
+	<td>
+		"no declaration for &quot;sstd_logic&quot;"
 	</td>
 </tr><tr class="issue">
-	<td><strong class="text-error">Error<strong></td>
+	<td><strong class="text-error">
+			Error<strong></td>
 	<td>
-		Row 33, Column 44: "no declaration for &quot;insput2&quot;"
-		<a href="" target="_blank">no declaration for "insput2"</a>
+		Row 33, Column 44
+	</td>
+	<td>
+		"no declaration for &quot;insput2&quot;"
 	</td>
 </tr><tr class="issue">
-	<td><strong class="text-error">Error<strong></td>
+	<td><strong class="text-error">
+			Error<strong></td>
 	<td>
-		Row 34, Column 32: "can&#39;t associate &#39;wire&#39; with signal interface &quot;x&quot;"
-		<a href="" target="_blank">can't associate 'wire' with signal interface "x"</a>
+		Row 34, Column 32
+	</td>
+	<td>
+		"can&#39;t associate &#39;wire&#39; with signal interface &quot;x&quot;"
 	</td>
 </tr><tr class="issue">
-	<td><strong class="text-error">Error<strong></td>
+	<td><strong class="text-error">
+			Error<strong></td>
 	<td>
-		Row 34, Column 32: "(type of &#39;wire&#39; is std_logic)"
-		<a href="" target="_blank">(type of 'wire' is std_logic)</a>
+		Row 34, Column 32
+	</td>
+	<td>
+		"(type of &#39;wire&#39; is std_logic)"
 	</td>
 </tr><tr class="issue">
-	<td><strong class="text-error">Error<strong></td>
+	<td><strong class="text-error">
+			Error<strong></td>
 	<td>
-		Row 23, Column 12: "(type of signal interface &quot;x&quot; is an erroneous type)"
-		<a href="" target="_blank">(type of signal interface "x" is an erroneous type)</a>
+		Row 23, Column 12
+	</td>
+	<td>
+		"(type of signal interface &quot;x&quot; is an erroneous type)"
 	</td>
 </tr>
-		</tbody>
-	</table>
-</div>
+			</tbody>
+		</table>
+	</div>
 			</div>
 			<div role="tabpanel" class="tab-pane hidden" id="sourceCode-1">
 				<table class="source-code">
@@ -968,16 +1023,22 @@
 </tr>
 
 <tr class="issue">
-	<td><strong class="text-error">Error<strong></td>
+	<td><strong class="text-error">
+			Error<strong></td>
 	<td>
-		Row 23, Column 18: "no declaration for &quot;sstd_logic&quot;"
-		<a href="" target="_blank">no declaration for "sstd_logic"</a>
+		Row 23, Column 18
+	</td>
+	<td>
+		"no declaration for &quot;sstd_logic&quot;"
 	</td>
 </tr><tr class="issue">
-	<td><strong class="text-error">Error<strong></td>
+	<td><strong class="text-error">
+			Error<strong></td>
 	<td>
-		Row 23, Column 12: "(type of signal interface &quot;x&quot; is an erroneous type)"
-		<a href="" target="_blank">(type of signal interface "x" is an erroneous type)</a>
+		Row 23, Column 12
+	</td>
+	<td>
+		"(type of signal interface &quot;x&quot; is an erroneous type)"
 	</td>
 </tr><tr class="hit bg-error">
 	<td class="line">23</td>
@@ -1030,10 +1091,13 @@
 </tr>
 
 <tr class="issue">
-	<td><strong class="text-error">Error<strong></td>
+	<td><strong class="text-error">
+			Error<strong></td>
 	<td>
-		Row 33, Column 44: "no declaration for &quot;insput2&quot;"
-		<a href="" target="_blank">no declaration for "insput2"</a>
+		Row 33, Column 44
+	</td>
+	<td>
+		"no declaration for &quot;insput2&quot;"
 	</td>
 </tr><tr class="hit bg-error">
 	<td class="line">33</td>
@@ -1041,16 +1105,22 @@
 </tr>
 
 <tr class="issue">
-	<td><strong class="text-error">Error<strong></td>
+	<td><strong class="text-error">
+			Error<strong></td>
 	<td>
-		Row 34, Column 32: "can&#39;t associate &#39;wire&#39; with signal interface &quot;x&quot;"
-		<a href="" target="_blank">can't associate 'wire' with signal interface "x"</a>
+		Row 34, Column 32
+	</td>
+	<td>
+		"can&#39;t associate &#39;wire&#39; with signal interface &quot;x&quot;"
 	</td>
 </tr><tr class="issue">
-	<td><strong class="text-error">Error<strong></td>
+	<td><strong class="text-error">
+			Error<strong></td>
 	<td>
-		Row 34, Column 32: "(type of &#39;wire&#39; is std_logic)"
-		<a href="" target="_blank">(type of 'wire' is std_logic)</a>
+		Row 34, Column 32
+	</td>
+	<td>
+		"(type of &#39;wire&#39; is std_logic)"
 	</td>
 </tr><tr class="hit bg-error">
 	<td class="line">34</td>

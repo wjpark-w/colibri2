@@ -149,8 +149,8 @@ function renderIssue(message) {
 		lineNumber: message.line,
 		column: message.column,
 		message: _.escape(message.message),
-		ruleId: message.ruleId,
-		ruleLink: getRuleLink(message.ruleId)
+		ruleId: '',
+		ruleLink: ''
 	});
 }
 
@@ -340,7 +340,7 @@ function isOutputDirKnown() {
 // Public Interface
 //------------------------------------------------------------------------------
 
-module.exports.generateTemplate = function generateTemplate(results, isMultiOn) {
+module.exports.generateTemplate = function generateTemplate(results, isMultiOn, linter_name) {
 	const currWorkingDir = process.cwd() || '',
 		rules = _(results).map('messages').flatten().groupBy('severity').value(), // rule messages grouped by severity
 		problemFiles = _(results).reject({
@@ -364,6 +364,7 @@ module.exports.generateTemplate = function generateTemplate(results, isMultiOn) 
 	});
 
 	return pageTemplate({
+		linter_name: linter_name,
 		reportColor: renderColor(totalErrors, totalWarnings),
 		reportSummary: renderSummary(totalErrors, totalWarnings),
 		summaryDetails: renderSummaryDetails(rules, problemFiles, currWorkingDir),

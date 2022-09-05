@@ -10,6 +10,6 @@ const templateGenerator = require('./template-generator');
 // Public Interface
 //------------------------------------------------------------------------------
 
-module.exports = function(results) {
-	return templateGenerator.generateTemplate(results, false);
+module.exports = function (results, linter_name) {
+	return templateGenerator.generateTemplate(results, false, linter_name);
 };

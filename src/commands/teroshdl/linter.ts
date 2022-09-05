@@ -1,3 +1,21 @@
+// Copyright 2022
+// Carlos Alberto Ruiz Naranjo [carlosruiznaranjo@gmail.com]
+//
+// This file is part of colibri2
+//
+// Colibri is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Colibri is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with colibri2.  If not, see <https://www.gnu.org/licenses/>.
+
 import { Command, Flags } from '@oclif/core';
 import * as path_lib from 'path';
 import * as file_utils from '../../utils/file_utils';
@@ -6,39 +24,17 @@ import * as printer from '../../utils/printer';
 import { Linter } from "../../linter/linter";
 import * as linter_common from '../../linter/common';
 import * as logger from '../../logger/logger';
+import * as reporter from '../../reporter/reporter';
 
 function get_linters(): string[] {
     const key_list = Object.values(linter_common.LINTER_NAME);
     return key_list;
 }
 
-type i_error = {
-    ruleId: string;
-    severity: number;
-    message: string;
-    line: number;
-    column: number;
-    nodeType: string;
-    messageId: string;
-    endLine: number;
-    endColumn: number;
-}
-
-type i_file_error = {
-    filePath: string;
-    messages: i_error[];
-    errorCount: number;
-    fatalErrorCount: number;
-    warningCount: number;
-    fixableErrorCount: number;
-    fixableWarningCount: number;
-    source: string
-}
-
 function get_norm_error(filename: string, error_list: linter_common.l_error[])
-    : i_file_error {
+    : reporter.i_file_error {
 
-    const i_file_error: i_file_error = {
+    const i_file_error: reporter.i_file_error = {
         filePath: filename,
         messages: [],
         errorCount: 0,
@@ -62,7 +58,7 @@ function get_norm_error(filename: string, error_list: linter_common.l_error[])
             ++warning_count;
         }
 
-        const error_norm: i_error = {
+        const error_norm: reporter.i_error = {
             ruleId: error_inst.description,
             severity: severity,
             message: error_inst.description,
@@ -80,15 +76,8 @@ function get_norm_error(filename: string, error_list: linter_common.l_error[])
     return i_file_error;
 }
 
-function create_report(error_list: i_file_error[], output_path: string) {
-    const detailed = require('../../reporter/detailed');
-    const template = detailed(error_list, false);
 
-    file_utils.save_file_sync(output_path, template);
-}
-
-
-function print_summary(error_list: i_file_error[]) {
+function print_summary(error_list: reporter.i_file_error[]) {
     const title = "Summary";
     const column_title = ["File", "Warnings", "Errors"];
     const column_color = ["white", "yellow", "red"];
@@ -101,7 +90,7 @@ function print_summary(error_list: i_file_error[]) {
     printer.print_table(title, column_title, column_color, row_list);
 }
 
-function print_error_table(error_file: i_file_error) {
+function print_error_table(error_file: reporter.i_file_error) {
     // eslint-disable-next-line no-console
     console.log();
     const title = `Errors report for ${file_utils.get_filename(error_file.filePath)}`;
@@ -136,13 +125,20 @@ function print_error_table(error_file: i_file_error) {
 }
 
 
-function print_report(error_list: i_file_error[]) {
+function print_report(error_list: reporter.i_file_error[]) {
     print_summary(error_list);
     error_list.forEach(error_inst => {
         print_error_table(error_inst);
     });
 }
 
+type t_output_path = {
+    html: string;
+    html_detailed: string;
+    junit: string;
+    json: string;
+    compact: string;
+}
 
 export default class MyCLI extends Command {
     static description = 'Check errors in HDL files.';
@@ -156,14 +152,44 @@ export default class MyCLI extends Command {
             required: true,
             default: ''
         }),
-        output: Flags.string({
-            char: 'o',
-            description: 'Output report path. E.g: report.html',
+
+
+        html: Flags.string({
+            description: 'HTML report path. E.g: report.html',
             hidden: false,
             multiple: false,
             required: false,
             default: ''
         }),
+        "html-detailed": Flags.string({
+            description: 'HTML detailed report path. E.g: report.html',
+            hidden: false,
+            multiple: false,
+            required: false,
+            default: ''
+        }),
+        junit: Flags.string({
+            description: 'JUnit report path. E.g: report.xml',
+            hidden: false,
+            multiple: false,
+            required: false,
+            default: ''
+        }),
+        "json-format": Flags.string({
+            description: 'JSON report path. E.g: report.xml',
+            hidden: false,
+            multiple: false,
+            required: false,
+            default: ''
+        }),
+        compact: Flags.string({
+            description: 'Compact report path. E.g: report.txt',
+            hidden: false,
+            multiple: false,
+            required: false,
+            default: ''
+        }),
+
         linter: Flags.string({
             description: 'Linter name',
             hidden: false,
@@ -203,11 +229,78 @@ export default class MyCLI extends Command {
         }),
     };
 
+    get_output_extension(type: reporter.TYPE_REPORT): string {
+        if (type === reporter.TYPE_REPORT.HTML) {
+            return 'html';
+        }
+        else if (type === reporter.TYPE_REPORT.HTML_DETAILED) {
+            return '.html';
+        }
+        else if (type === reporter.TYPE_REPORT.JUNIT) {
+            return '.xml';
+        }
+        else if (type === reporter.TYPE_REPORT.JSON) {
+            return '.json';
+        }
+        else if (type === reporter.TYPE_REPORT.COMPACT) {
+            return '.txt';
+        }
+        return 'txt';
+    }
+
+    create_report_inst(output_path_user: string, cmd_current_dir: string, error_list: reporter.i_file_error[],
+        type: reporter.TYPE_REPORT, linter_name: string) {
+
+        const extension_default = this.get_output_extension(type);
+        const output_path = this.get_output_path(cmd_current_dir, output_path_user, extension_default);
+        if (output_path === '') {
+            return;
+        }
+        const report_str = reporter.get_report(type, error_list, linter_name);
+        file_utils.save_file_sync(output_path, report_str);
+    }
+
+    create_report(output_path_list: t_output_path, cmd_current_dir: string,
+        error_list: reporter.i_file_error[], linter_name: string) {
+        // HTML
+        this.create_report_inst(output_path_list.html, cmd_current_dir, error_list,
+            reporter.TYPE_REPORT.HTML, linter_name);
+        // HTML detailed
+        this.create_report_inst(output_path_list.html_detailed, cmd_current_dir, error_list,
+            reporter.TYPE_REPORT.HTML_DETAILED, linter_name);
+        // JUnit
+        this.create_report_inst(output_path_list.junit, cmd_current_dir, error_list,
+            reporter.TYPE_REPORT.JUNIT, linter_name);
+        // JSON
+        this.create_report_inst(output_path_list.json, cmd_current_dir, error_list,
+            reporter.TYPE_REPORT.JSON, linter_name);
+        // compact
+        this.create_report_inst(output_path_list.compact, cmd_current_dir, error_list,
+            reporter.TYPE_REPORT.COMPACT, linter_name);
+    }
+
+    get_output_path(cmd_current_dir: string, current_path: string, file_extension: string): string {
+        let output_path = '';
+        if (current_path !== '') {
+            // If path is a directory, it creates a default path
+            if (file_utils.check_if_path_exist(current_path) && file_utils.check_if_file(current_path) === false) {
+                output_path = path_lib.join(cmd_current_dir, `report.${file_extension}`);
+            }
+
+            output_path = file_utils.get_full_path(current_path);
+            const output_directory = file_utils.get_directory(output_path);
+            if (file_utils.check_if_path_exist(output_directory) === false) {
+                printer.print_msg(`Output file folder "${output_directory}" doesn't exist.`, printer.T_LOG_LEVEL.ERROR);
+                this.exit(-1);
+            }
+        }
+        return output_path;
+    }
+
     async run(): Promise<void> {
         const { flags } = await this.parse(MyCLI);
 
         const input_path = flags.input;
-        let output_path = flags.output;
         const linter_name = flags.linter;
         const linter_path = flags['linter-path'];
         const linter_arguments = flags['linter-arguments'];
@@ -226,36 +319,33 @@ export default class MyCLI extends Command {
         //Input
         const hdl_file_list = await command_utils.get_files_from_input(input_path, cmd_current_dir);
 
-        //Output file
-        if (output_path !== '') {
-            if (file_utils.check_if_path_exist(output_path) && file_utils.check_if_file(output_path) === false) {
-                output_path = path_lib.join(cmd_current_dir, 'report.html');
-            }
-
-            output_path = file_utils.get_full_path(output_path);
-            const output_directory = file_utils.get_directory(output_path);
-            if (file_utils.check_if_path_exist(output_directory) === false) {
-                printer.print_msg(`Output file folder "${output_directory}" doesn't exist.`, printer.T_LOG_LEVEL.ERROR);
-                this.exit(-1);
-            }
-        }
-
         const linter_manager = new Linter(linter_name);
         const linter_options: linter_common.l_options = {
             path: linter_path,
             argument: linter_arguments
         };
 
-        const error_list_end: i_file_error[] = [];
+        const error_list_end: reporter.i_file_error[] = [];
         for (let i = 0; i < hdl_file_list.length; i++) {
             const hdl_file = hdl_file_list[i];
             const error_list = await linter_manager.lint_from_file(hdl_file.filename, linter_options);
             const const_error_list_norm = get_norm_error(hdl_file.filename, error_list);
             error_list_end.push(const_error_list_norm);
         }
-        if (output_path !== '') {
-            create_report(error_list_end, output_path);
-        }
+
+        ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        // Reports
+        ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        const output_report_path: t_output_path = {
+            'html': flags.html,
+            'html_detailed': flags["html-detailed"],
+            'junit': flags.junit,
+            'json': flags["json-format"],
+            'compact': flags.compact,
+        };
+
+        this.create_report(output_report_path, cmd_current_dir, error_list_end, linter_name);
+
         if (silent === false) {
             print_report(error_list_end);
         }

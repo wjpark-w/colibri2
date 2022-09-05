@@ -30,7 +30,11 @@ const C_INPUT_BASE = path_lib.join(__dirname, 'helpers');
 
 type t_config = {
     input: string;
-    output: string;
+    html: string;
+    html_detailed: string;
+    junit: string;
+    json_format: string;
+    compact: string;
     linter: string;
     linter_arguments: string;
     linter_path: string;
@@ -40,7 +44,11 @@ function get_command(config: t_config) {
     const cmd = [
         'teroshdl:linter',
         '--input', config.input,
-        '--output', config.output,
+        '--html', config.html,
+        '--html-detailed', config.html_detailed,
+        '--junit', config.junit,
+        '--json-format', config.json_format,
+        '--compact', config.compact,
         '--linter', config.linter,
         '--linter-arguments', config.linter_arguments,
         '--linter-path', config.linter_path
@@ -49,12 +57,20 @@ function get_command(config: t_config) {
 }
 
 describe('teroshdl:linter', () => {
-    const expected_path = path_lib.join(C_EXPECTED_BASE_PATH, 'report_out.html');
-    const current_path = path_lib.join(C_OUTPUT_BASE_PATH, 'report.html');
+    const expected_path = path_lib.join(C_EXPECTED_BASE_PATH, 'report_detailed.html');
+    const current_path_html = path_lib.join(C_OUTPUT_BASE_PATH, 'report.html');
+    const current_path_html_detailed = path_lib.join(C_OUTPUT_BASE_PATH, 'report_detailed.html');
+    const current_path_junit = path_lib.join(C_OUTPUT_BASE_PATH, 'report.xml');
+    const current_path_json = path_lib.join(C_OUTPUT_BASE_PATH, 'report.json');
+    const current_path_compact = path_lib.join(C_OUTPUT_BASE_PATH, 'report.txt');
 
     const config: t_config = {
         input: path_lib.join(C_INPUT_BASE, "*.vhd"),
-        output: current_path,
+        html: current_path_html,
+        html_detailed: current_path_html_detailed,
+        junit: current_path_junit,
+        json_format: current_path_json,
+        compact: current_path_compact,
         linter: linter_common.LINTER_NAME.GHDL,
         linter_arguments: '',
         linter_path: ''
@@ -66,7 +82,7 @@ describe('teroshdl:linter', () => {
         .command(get_command(config))
         .it('Check linter', _ctx => {
             const content_expected = file_utils.read_file_sync(expected_path);
-            const content_current = file_utils.read_file_sync(current_path);
+            const content_current = file_utils.read_file_sync(current_path_html_detailed);
             expect(content_current).to.equal(content_expected);
         });
 });

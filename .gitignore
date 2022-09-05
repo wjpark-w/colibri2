@@ -4,3 +4,5 @@ out
 mochawesome-report
 *.xml
 out_doc_api
+dist
+tmp

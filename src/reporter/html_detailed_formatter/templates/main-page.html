@@ -54,9 +54,11 @@
 
 
 
-		<h1 style=' padding-left:70px;'>TerosHDL linter report - <small class="text-<%= reportColor %>">
-				<%= reportColor %>
-			</small></h1>
+		<h1 style=' padding-left:70px;'>
+			<%= linter_name %> report - <small class="text-<%= reportColor %>">
+					<%= reportColor %>
+				</small>
+		</h1>
 	</div>
 
 	<div class="container">
@@ -65,7 +67,7 @@
 			<div>
 				<%= reportSummary %>
 			</div>
-			<%= summaryDetails %>
+			<!-- <%= summaryDetails %> -->
 		</div>
 		<div id="details">
 			<h2 class="page-header">Details</h2>
