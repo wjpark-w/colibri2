@@ -28,6 +28,8 @@ import * as Diagram from "./diagram";
 import * as utils from "./utils";
 import * as common_utils from "../utils/common_utils";
 import { Section_creator_interface } from "./section_creator_interface";
+import { t_documenter_options } from "../config/auxiliar_config";
+import * as cfg from "../config/config_declaration";
 
 export class Creator extends Section_creator_interface {
     private converter;
@@ -56,8 +58,8 @@ export class Creator extends Section_creator_interface {
         return description.replace(/\r/g, ' ').replace(/\n/g, ' ');
     }
 
-    transform(markdown_str: string, configuration: common_documenter.documenter_options): string {
-        if (configuration.output_type === common_documenter.doc_output_type.HTML) {
+    transform(markdown_str: string, output_type: common_documenter.doc_output_type): string {
+        if (output_type === common_documenter.doc_output_type.HTML) {
             return this.converter.makeHtml(markdown_str);
         }
         else {
@@ -67,7 +69,8 @@ export class Creator extends Section_creator_interface {
     ////////////////////////////////////////////////////////////////////////////
     // Title section
     ////////////////////////////////////////////////////////////////////////////
-    get_title_section(hdl_element: common_hdl.Hdl_element, configuration: common_documenter.documenter_options)
+    get_title_section(hdl_element: common_hdl.Hdl_element, configuration: t_documenter_options,
+        output_type: common_documenter.doc_output_type)
         : string {
 
         let markdown_title = "";
@@ -78,53 +81,54 @@ export class Creator extends Section_creator_interface {
         else if (hdl_element.hdl_type === common_hdl.TYPE_HDL_ELEMENT.ENTITY) {
             markdown_title = `\n# ${translator.get_str('Entity')}: ${hdl_element.name} \n`;
         }
-        return this.transform(markdown_title, configuration);
+        return this.transform(markdown_title, output_type);
     }
     ////////////////////////////////////////////////////////////////////////////
     // Input section
     ////////////////////////////////////////////////////////////////////////////
-    get_input_section(input_path: string, configuration: common_documenter.documenter_options): string {
+    get_input_section(input_path: string, configuration: t_documenter_options,
+        output_type: common_documenter.doc_output_type): string {
         const translator = new translator_lib.Translator(configuration.language);
         let section = "";
         if (input_path !== "") {
             const filename = path_lib.basename(input_path);
             const input_section = `- **${translator.get_str('File')}**: ${filename}\n`;
-            section += this.transform(input_section, configuration);
+            section += this.transform(input_section, output_type);
         }
         return section;
     }
     ////////////////////////////////////////////////////////////////////////////
     // Description
     ////////////////////////////////////////////////////////////////////////////
-    get_description_section(hdl_element: common_hdl.Hdl_element, configuration: common_documenter.documenter_options,
-        svg_path_dir: string) {
+    get_description_section(hdl_element: common_hdl.Hdl_element, configuration: t_documenter_options,
+        svg_path_dir: string, output_type: common_documenter.doc_output_type) {
 
         if (hdl_element.description.trim() === '') {
             return '';
         }
         const translator = new translator_lib.Translator(configuration.language);
         // Description
-        const description = this.get_description(hdl_element.description, configuration, svg_path_dir,
-            hdl_element.name);
+        const description = this.get_description(hdl_element.description, svg_path_dir,
+            hdl_element.name, output_type);
         // Generate section
-        const section_header = this.transform(`\n## ${translator.get_str('Description')}\n\n`, configuration);
+        const section_header = this.transform(`\n## ${translator.get_str('Description')}\n\n`, output_type);
         return section_header + description;
     }
 
-    get_description(description: string, configuration: common_documenter.documenter_options, svg_path_dir: string,
-        image_basename: string) {
+    get_description(description: string, svg_path_dir: string,
+        image_basename: string, output_type: common_documenter.doc_output_type) {
         // Remove doxygen
         const doxygen_description = doxygen.parse_doxygen(description);
         // Parse wavedrom
-        const wavedrom_description_norm = this.parse_wavedrom(doxygen_description.text, configuration, svg_path_dir,
-            image_basename);
+        const wavedrom_description_norm = this.parse_wavedrom(doxygen_description.text, svg_path_dir,
+            image_basename, output_type);
         // Normalize
         const norm_description = utils.normalize_description(wavedrom_description_norm);
         return norm_description;
     }
 
-    parse_wavedrom(description: string, configuration: common_documenter.documenter_options,
-        svg_path_dir: string, svg_prefix_name: string): string {
+    parse_wavedrom(description: string,
+        svg_path_dir: string, svg_prefix_name: string, output_type: common_documenter.doc_output_type): string {
 
         if (svg_prefix_name === '') {
             svg_prefix_name = 'x';
@@ -133,10 +137,10 @@ export class Creator extends Section_creator_interface {
         // Parse wavedrom
         const wavedrom_description = this.get_wavedrom_svg(description);
         let wavedrom_description_norm = wavedrom_description.description;
-        wavedrom_description_norm = this.transform(wavedrom_description_norm, configuration);
+        wavedrom_description_norm = this.transform(wavedrom_description_norm, output_type);
         for (let i = 0; i < wavedrom_description.wavedrom.length; ++i) {
             const random_id = common_utils.makeid(4);
-            if (configuration.output_type === common_documenter.doc_output_type.MARKDOWN) {
+            if (output_type === common_documenter.doc_output_type.MARKDOWN) {
                 const img = `![alt text](wavedrom_${random_id}${i}.svg "title")`;
                 const path_img = path_lib.join(svg_path_dir, `wavedrom_${svg_prefix_name}_${random_id}${i}.svg`);
                 fs.writeFileSync(path_img, wavedrom_description.wavedrom[i]);
@@ -229,17 +233,18 @@ export class Creator extends Section_creator_interface {
     // Diagram section
     ////////////////////////////////////////////////////////////////////////////
     get_diagram_section(hdl_element: common_hdl.Hdl_element,
-        configuration: common_documenter.documenter_options, dir_svg: string): string {
+        configuration: t_documenter_options, dir_svg: string,
+        output_type: common_documenter.doc_output_type): string {
 
         const path_svg = path_lib.join(dir_svg, hdl_element.name + '.svg');
         const translator = new translator_lib.Translator(configuration.language);
         let section = "";
         if (hdl_element.hdl_type === common_hdl.TYPE_HDL_ELEMENT.ENTITY) {
             const markdown_section_title = `\n## ${translator.get_str('Diagram')}\n`;
-            section += this.transform(markdown_section_title, configuration);
+            section += this.transform(markdown_section_title, output_type);
             // eslint-disable-next-line max-len
             const svg_diagram = (this.get_diagram_svg_from_code_tree(hdl_element) + "\n").replace(/\*/g, "\\*").replace(/S`/g, "\\`");
-            if (configuration.output_type === common_documenter.doc_output_type.HTML) {
+            if (output_type === common_documenter.doc_output_type.HTML) {
                 section += svg_diagram;
             }
             else {
@@ -266,7 +271,8 @@ export class Creator extends Section_creator_interface {
     ////////////////////////////////////////////////////////////////////////////
     // Info section
     ////////////////////////////////////////////////////////////////////////////
-    get_info_section(hdl_element: common_hdl.Hdl_element, configuration: common_documenter.documenter_options) {
+    get_info_section(hdl_element: common_hdl.Hdl_element, configuration: t_documenter_options,
+        output_type: common_documenter.doc_output_type) {
         const translator = new translator_lib.Translator(configuration.language);
         const description = hdl_element.description;
         const doxygen_elements = doxygen.parse_doxygen(description);
@@ -278,14 +284,14 @@ export class Creator extends Section_creator_interface {
                 markdown_doc += `- **${translator.get_str(field_cap)}:** ${element.description.replace('\n', '')}\n`;
             }
         });
-        return this.transform(markdown_doc, configuration);
+        return this.transform(markdown_doc, output_type);
     }
 
     ////////////////////////////////////////////////////////////////////////////
     // Port section
     ////////////////////////////////////////////////////////////////////////////
     get_in_out_section(hdl_element: common_hdl.Hdl_element,
-        configuration: common_documenter.documenter_options): string {
+        configuration: t_documenter_options, output_type: common_documenter.doc_output_type): string {
 
         const translator = new translator_lib.Translator(configuration.language);
         const generics = hdl_element.get_generic_array();
@@ -325,14 +331,14 @@ export class Creator extends Section_creator_interface {
                 md += this.get_doc_ports(element.port_list, translator);
             }
         }
-        return this.transform(md, configuration);
+        return this.transform(md, output_type);
     }
 
     ////////////////////////////////////////////////////////////////////////////
     // Signal and constant section
     ////////////////////////////////////////////////////////////////////////////
     get_signal_constant_section(hdl_element: common_hdl.Hdl_element,
-        configuration: common_documenter.documenter_options): string {
+        configuration: t_documenter_options, output_type: common_documenter.doc_output_type): string {
 
         const translator = new translator_lib.Translator(configuration.language);
         let signals = hdl_element.get_signal_array();
@@ -341,48 +347,50 @@ export class Creator extends Section_creator_interface {
 
         let md = "";
 
-        if (configuration.signal_visibility === common_documenter.doc_visibility.ONLY_COMMENTED) {
+        if (configuration.signal_visibility === cfg.e_documentation_general_signals.only_commented) {
             signals = this.get_elements_with_description(signals);
         }
-        if (configuration.constant_visibility === common_documenter.doc_visibility.ONLY_COMMENTED) {
+        if (configuration.constant_visibility === cfg.e_documentation_general_constants.only_commented) {
             constants = this.get_elements_with_description(constants);
         }
-        if (configuration.type_visibility === common_documenter.doc_visibility.ONLY_COMMENTED) {
+        if (configuration.type_visibility === cfg.e_documentation_general_types.only_commented) {
             types = this.get_elements_with_description(types);
         }
 
-        if ((signals.length !== 0 && configuration.signal_visibility !== common_documenter.doc_visibility.NONE) ||
-            (constants.length !== 0 && configuration.constant_visibility !== common_documenter.doc_visibility.NONE) ||
-            (types.length !== 0 && configuration.constant_visibility !== common_documenter.doc_visibility.NONE)) {
+        if ((signals.length !== 0 && configuration.signal_visibility !== cfg.e_documentation_general_signals.none) ||
+            (constants.length !== 0 && configuration.constant_visibility !== cfg.e_documentation_general_constants.none)
+            || (types.length !== 0 && configuration.type_visibility !== cfg.e_documentation_general_types.none)) {
             //Tables
-            if (signals.length !== 0 && configuration.constant_visibility !== common_documenter.doc_visibility.NONE) {
+            if (signals.length !== 0 && configuration.signal_visibility !== cfg.e_documentation_general_signals.none) {
                 md += `\n## ${translator.get_str('Signals')}\n\n`;
                 md += this.get_doc_signals(signals, translator);
             }
-            if (constants.length !== 0 && configuration.constant_visibility !== common_documenter.doc_visibility.NONE) {
+            if (constants.length !== 0 && configuration.constant_visibility !==
+                cfg.e_documentation_general_constants.none) {
+
                 md += `\n## ${translator.get_str('Constants')}\n\n`;
                 md += this.get_doc_constants(constants, translator);
             }
-            if (types.length !== 0 && configuration.constant_visibility !== common_documenter.doc_visibility.NONE) {
+            if (types.length !== 0 && configuration.type_visibility !== cfg.e_documentation_general_types.none) {
                 md += `\n## ${translator.get_str('Types')}\n\n`;
                 md += this.get_doc_types(types, translator);
             }
         }
-        return this.transform(md, configuration);
+        return this.transform(md, output_type);
     }
 
     ////////////////////////////////////////////////////////////////////////////
     // Process section
     ////////////////////////////////////////////////////////////////////////////
     get_process_section(hdl_element: common_hdl.Hdl_element,
-        configuration: common_documenter.documenter_options): string {
+        configuration: t_documenter_options, output_type: common_documenter.doc_output_type): string {
 
         const translator = new translator_lib.Translator(configuration.language);
         let process = hdl_element.get_process_array();
         if (configuration.process_visibility === 'none') {
             return '';
         }
-        if (configuration.process_visibility === common_documenter.doc_visibility.ONLY_COMMENTED) {
+        if (configuration.process_visibility === cfg.e_documentation_general_process.only_commented) {
             process = this.get_elements_with_description(process);
         }
         const converter = new showdown.Converter({ tables: true, ghCodeBlocks: true });
@@ -413,7 +421,7 @@ export class Creator extends Section_creator_interface {
                 }
             }
         }
-        if (configuration.output_type === common_documenter.doc_output_type.HTML) {
+        if (output_type === common_documenter.doc_output_type.HTML) {
             return html;
         }
         return md;
@@ -423,14 +431,14 @@ export class Creator extends Section_creator_interface {
     // Function section
     ////////////////////////////////////////////////////////////////////////////
     get_function_section(hdl_element: common_hdl.Hdl_element,
-        configuration: common_documenter.documenter_options): string {
+        configuration: t_documenter_options, output_type: common_documenter.doc_output_type): string {
 
         const translator = new translator_lib.Translator(configuration.language);
         let functions = hdl_element.get_function_array();
-        if (configuration.function_visibility === common_documenter.doc_visibility.NONE) {
+        if (configuration.function_visibility === cfg.e_documentation_general_functions.none) {
             return '';
         }
-        if (configuration.function_visibility === common_documenter.doc_visibility.ONLY_COMMENTED) {
+        if (configuration.function_visibility === cfg.e_documentation_general_functions.only_commented) {
             functions = this.get_elements_with_description(functions);
         }
         let md = "";
@@ -471,7 +479,7 @@ export class Creator extends Section_creator_interface {
                 }
             }
         }
-        if (configuration.output_type === common_documenter.doc_output_type.HTML) {
+        if (output_type === common_documenter.doc_output_type.HTML) {
             return html;
         }
         return md;
@@ -481,7 +489,7 @@ export class Creator extends Section_creator_interface {
     // Instantiation section
     ////////////////////////////////////////////////////////////////////////////
     get_instantiation_section(hdl_element: common_hdl.Hdl_element,
-        configuration: common_documenter.documenter_options): string {
+        configuration: t_documenter_options, output_type: common_documenter.doc_output_type): string {
 
         const translator = new translator_lib.Translator(configuration.language);
         const instantiations = hdl_element.get_instantiation_array();
@@ -510,7 +518,7 @@ export class Creator extends Section_creator_interface {
                 }
             }
         }
-        if (configuration.output_type === common_documenter.doc_output_type.HTML) {
+        if (output_type === common_documenter.doc_output_type.HTML) {
             return html;
         }
         return md;
@@ -519,7 +527,8 @@ export class Creator extends Section_creator_interface {
     // FSM section
     ////////////////////////////////////////////////////////////////////////////
     get_fsm_section(fsm_list: any, hdl_element: common_hdl.Hdl_element,
-        configuration: common_documenter.documenter_options, svg_output_dir: string): string {
+        configuration: t_documenter_options, svg_output_dir: string,
+        output_type: common_documenter.doc_output_type): string {
 
         const translator = new translator_lib.Translator(configuration.language);
         const converter = new showdown.Converter({ tables: true, ghCodeBlocks: true });
@@ -528,7 +537,7 @@ export class Creator extends Section_creator_interface {
             return section;
         }
 
-        if (configuration.output_type === common_documenter.doc_output_type.HTML) {
+        if (output_type === common_documenter.doc_output_type.HTML) {
             section += converter.makeHtml(`## ${translator.get_str('State machines')}\n\n`);
             section += '<div>';
             for (let i = 0; i < fsm_list.length; ++i) {
@@ -565,7 +574,7 @@ export class Creator extends Section_creator_interface {
     // Custom section
     ////////////////////////////////////////////////////////////////////////////
     get_custom_section(position: string, hdl_element: common_hdl.Hdl_element,
-        configuration: common_documenter.documenter_options, input_path: string) {
+        input_path: string, output_type: common_documenter.doc_output_type) {
 
         let directory_base = '';
         if (input_path !== '') {
@@ -599,7 +608,7 @@ export class Creator extends Section_creator_interface {
         }
 
         let result = fs.readFileSync(file_path, { encoding: 'utf8', flag: 'r' });
-        if (configuration.output_type === common_documenter.doc_output_type.HTML) {
+        if (output_type === common_documenter.doc_output_type.HTML) {
             const showdown_highlight = require("showdown-highlight");
             const converter = new showdown.Converter({
                 tables: true, ghCodeBlocks: true,

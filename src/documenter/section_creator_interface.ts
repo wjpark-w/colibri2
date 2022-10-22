@@ -23,12 +23,13 @@ import * as common_hdl from "../parser/common";
 import * as common_documenter from "./common";
 import * as utils from "./utils";
 import * as markdown_table from "./markdown_table";
+import { t_documenter_options } from "../config/auxiliar_config";
 
 export class Section_creator_interface {
 
 
     get_interface_section(hdl_element: common_hdl.Hdl_element,
-        configuration: common_documenter.documenter_options): string {
+        configuration: t_documenter_options, output_type: common_documenter.doc_output_type): string {
         let section = "";
 
         if (hdl_element.hdl_type !== common_hdl.TYPE_HDL_ELEMENT.INTERFACE_DECLARATION) {
@@ -37,13 +38,13 @@ export class Section_creator_interface {
 
         const interface_list = hdl_element.get_interface_array();
         interface_list.forEach(element => {
-            section += this.get_interface(element, configuration);
+            section += this.get_interface(element, configuration, output_type);
         });
         return section;
     }
 
     get_interface(interface_inst: common_hdl.Hdl_element,
-        configuration: common_documenter.documenter_options) {
+        configuration: t_documenter_options, output_type: common_documenter.doc_output_type) {
 
         const translator = new translator_lib.Translator(configuration.language);
         let doc = '';
@@ -54,7 +55,7 @@ export class Section_creator_interface {
 
         // Title
         doc_raw = `# ${translator.get_str('Interface')}: ${interface_inst['name']}\n\n`;
-        if (configuration.output_type === common_documenter.doc_output_type.MARKDOWN) {
+        if (output_type === common_documenter.doc_output_type.MARKDOWN) {
             doc += doc_raw;
         }
         else {
@@ -64,7 +65,7 @@ export class Section_creator_interface {
         // Description
         const description = utils.normalize_description(interface_inst.description);
         doc_raw = `${description}\n\n`;
-        if (configuration.output_type === common_documenter.doc_output_type.MARKDOWN) {
+        if (output_type === common_documenter.doc_output_type.MARKDOWN) {
             doc = doc_raw;
         }
         else {
@@ -72,16 +73,16 @@ export class Section_creator_interface {
         }
 
         // Ports
-        doc += this.get_ports_interface(interface_inst.get_port_array(), translator, configuration);
+        doc += this.get_ports_interface(interface_inst.get_port_array(), translator, output_type);
 
         // Parameters
-        doc += this.get_parameters_interface(interface_inst.get_generic_array(), translator, configuration);
+        doc += this.get_parameters_interface(interface_inst.get_generic_array(), translator, output_type);
 
         // Logics
-        doc += this.get_logics(interface_inst.get_logic_array(), translator, configuration);
+        doc += this.get_logics(interface_inst.get_logic_array(), translator, output_type);
 
         // Modports
-        doc += this.get_modports(interface_inst.get_modport_array(), translator, configuration);
+        doc += this.get_modports(interface_inst.get_modport_array(), translator, output_type);
 
         // // Others
         // doc += this.get_others(interface_inst['others']);
@@ -90,7 +91,7 @@ export class Section_creator_interface {
     }
 
     get_parameters_interface(items: common_hdl.Port_hdl[], translator: translator_lib.Translator,
-        configuration: common_documenter.documenter_options) {
+        output_type: common_documenter.doc_output_type) {
         const title = "Parameters";
 
         const header = [
@@ -101,11 +102,11 @@ export class Section_creator_interface {
 
         const keys = ['name', 'default_value', 'description'];
 
-        return utils.get_table_with_title(items, title, header, keys, translator, configuration);
+        return utils.get_table_with_title(items, title, header, keys, translator, output_type);
     }
 
     get_ports_interface(items: common_hdl.Port_hdl[], translator: translator_lib.Translator,
-        configuration: common_documenter.documenter_options) {
+        output_type: common_documenter.doc_output_type) {
         const title = "Ports";
 
         const header = [
@@ -117,12 +118,12 @@ export class Section_creator_interface {
 
         const keys = ['name', 'direction', 'type', 'description'];
 
-        return utils.get_table_with_title(items, title, header, keys, translator, configuration);
+        return utils.get_table_with_title(items, title, header, keys, translator, output_type);
     }
 
 
     get_types_data_interface(items: any, translator: translator_lib.Translator,
-        configuration: common_documenter.documenter_options) {
+        output_type: common_documenter.doc_output_type) {
         const title = "Signals";
 
         const header = [
@@ -133,11 +134,11 @@ export class Section_creator_interface {
 
         const keys = ['name', 'type', 'description'];
 
-        return utils.get_table_with_title(items, title, header, keys, translator, configuration);
+        return utils.get_table_with_title(items, title, header, keys, translator, output_type);
     }
 
     get_logics(items: common_hdl.Logic_hdl[], translator: translator_lib.Translator,
-        configuration: common_documenter.documenter_options) {
+        output_type: common_documenter.doc_output_type) {
         const title = "Signals";
 
         const header = [
@@ -148,10 +149,10 @@ export class Section_creator_interface {
 
         const keys = ['name', 'type', 'description'];
 
-        return utils.get_table_with_title(items, title, header, keys, translator, configuration);
+        return utils.get_table_with_title(items, title, header, keys, translator, output_type);
     }
 
-    get_others(items: any, translator: translator_lib.Translator, configuration: common_documenter.documenter_options) {
+    get_others(items: any, translator: translator_lib.Translator, output_type: common_documenter.doc_output_type) {
         const title = "Others";
 
         const header = [
@@ -162,11 +163,11 @@ export class Section_creator_interface {
 
         const keys = ['name', 'kind', 'description'];
 
-        return utils.get_table_with_title(items, title, header, keys, translator, configuration);
+        return utils.get_table_with_title(items, title, header, keys, translator, output_type);
     }
 
     get_modports(modports: common_hdl.Modport_hdl[], translator: translator_lib.Translator,
-        configuration: common_documenter.documenter_options) {
+        output_type: common_documenter.doc_output_type) {
 
         const converter = new showdown.Converter({ tables: true, ghCodeBlocks: true });
         converter.setFlavor('github');
@@ -213,7 +214,7 @@ export class Section_creator_interface {
             doc_markdown += doc_raw;
             doc_html += converter.makeHtml(doc_raw);
         }
-        if (configuration.output_type === common_documenter.doc_output_type.MARKDOWN) {
+        if (output_type === common_documenter.doc_output_type.MARKDOWN) {
             return doc_markdown;
         }
         else {

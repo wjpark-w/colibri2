@@ -92,7 +92,6 @@ function print_summary(error_list: reporter.i_file_error[]) {
 
 function print_error_table(error_file: reporter.i_file_error) {
     // eslint-disable-next-line no-console
-    console.log();
     const title = `Errors report for ${file_utils.get_filename(error_file.filePath)}`;
     const column_title = ["Severty", "Description"];
     const column_color = ["white", "green"];

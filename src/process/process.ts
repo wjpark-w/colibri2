@@ -40,8 +40,11 @@ export class Process {
         return <p_result>await this.p?.exec_wait(command, opt_ins);
     }
 
-    exec(command: string, opt?: p_options) {
+    exec(command: string, opt: p_options | undefined, callback: (result: p_result) => void) {
         const opt_ins = (typeof opt === 'undefined') ? this.DEFAULT_OPT : opt;
-        return this.p?.exec(command, opt_ins);
+        const exec_i = this.p?.exec(command, opt_ins, (result: p_result) => {
+            callback(result);
+        });
+        return exec_i;
     }
 }

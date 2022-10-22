@@ -151,7 +151,7 @@ export function get_declaration(code: string, lang: HDL_LANG) {
     return declaration;
 }
 
-export async function get_toplevel_from_path(filepath: string): Promise<string> {
+export function get_toplevel_from_path(filepath: string): string {
     if (fs.existsSync(filepath) === false) {
         return '';
     }

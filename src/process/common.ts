@@ -50,3 +50,10 @@ export enum OS {
     MAC = "darwin"
 }
 
+/** OS sentence */
+export enum e_sentence {
+    EXPORT = "export",
+    MORE = "more",
+    SWITCH = "switch",
+    FOLDER_SEP = "folder_sep",
+}

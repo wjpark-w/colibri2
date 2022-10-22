@@ -24,3 +24,5 @@ export * as linter from './linter/export_t';
 export * as process from './process/export_t';
 export * as template from './template/export_t';
 export * as utils from './utils/export_t';
+export * as project_manager from './project_manager/export_t';
+export * as config from './config/export_t';

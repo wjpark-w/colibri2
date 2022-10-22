@@ -1,0 +1,12 @@
+installation_path:
+  description: "Installation path:"
+  type: string
+  value: ""
+vcs_options:
+  description: ""
+  type: array
+  value: []
+run_options:
+  description: ""
+  type: array
+  value: []

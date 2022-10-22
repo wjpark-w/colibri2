@@ -17,15 +17,15 @@
 // You should have received a copy of the GNU General Public License
 // along with colibri2.  If not, see <https://www.gnu.org/licenses/>.
 
-import * as common_documenter from "./common";
 import * as fs from 'fs';
 import * as path_lib from 'path';
+import * as cfg from "../config/config_declaration";
 
 export class Translator {
     private translation;
-    private language: common_documenter.LANGUAGE;
+    private language: cfg.e_documentation_general_language;
 
-    constructor(language: common_documenter.LANGUAGE) {
+    constructor(language: cfg.e_documentation_general_language) {
         const translation_path = path_lib.join(__dirname, 'translation.json');
         const rawdata = fs.readFileSync(translation_path).toString();
         this.translation = JSON.parse(rawdata);
@@ -33,7 +33,7 @@ export class Translator {
         this.language = language;
     }
 
-    set_language(language: common_documenter.LANGUAGE) {
+    set_language(language: cfg.e_documentation_general_language) {
         this.language = language;
     }
 

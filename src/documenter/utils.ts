@@ -31,7 +31,7 @@ export function normalize_description(description: string): string {
 
 export function get_table_with_title(items: any, title: string, header: string[], keys: string[],
     translator: translator_lib.Translator,
-    configuration: common_documenter.documenter_options) {
+    output_type: common_documenter.doc_output_type) {
 
     const converter = new showdown.Converter({ tables: true, ghCodeBlocks: true });
     converter.setFlavor('github');
@@ -72,7 +72,7 @@ export function get_table_with_title(items: any, title: string, header: string[]
     }
     doc_markdown += doc_raw;
     doc_html += converter.makeHtml(doc_raw);
-    if (configuration.output_type === common_documenter.doc_output_type.MARKDOWN) {
+    if (output_type === common_documenter.doc_output_type.MARKDOWN) {
         return doc_markdown;
     }
     else {
