@@ -24,6 +24,8 @@ import * as printer from '../../utils/printer';
 import * as hdl_utils from '../../utils/hdl_utils';
 import * as template_manager from '../../template/manager';
 import * as template_common from '../../template/common';
+import * as cfg from '../../config/config_declaration';
+import * as cfg_aux from '../../config/auxiliar_config';
 
 function get_modes(): string[] {
     const vhdl_key_list = Object.values(template_common.TEMPLATE_NAME_VHDL);
@@ -166,17 +168,17 @@ export default class MyCLI extends Command {
         const cl_template = new template_manager.Template_manager(input_hdl_lang);
         const code_content = file_utils.read_file_sync(input_path_absolute);
 
-        let clock_style = template_common.TYPE_CLOCK_GENERATION_STYLE.INLINE;
+        let clock_style = cfg.e_templates_general_clock_generation_style.inline;
         if (flags.clock === "ifelse") {
-            clock_style = template_common.TYPE_CLOCK_GENERATION_STYLE.IFELSE;
+            clock_style = cfg.e_templates_general_clock_generation_style.ifelse;
         }
 
-        let instance_style = template_common.TYPE_INSTANCE_DECLARATION.INLINE;
+        let instance_style = cfg.e_templates_general_instance_style.inline;
         if (flags.instance === "separate") {
-            instance_style = template_common.TYPE_INSTANCE_DECLARATION.SEPARATE;
+            instance_style = cfg.e_templates_general_instance_style.separate;
         }
 
-        const template_options: template_common.t_options = {
+        const template_options: cfg_aux.t_template_options = {
             header_file_path: flags.header,
             indent_char: flags.indent,
             clock_generation_style: clock_style,

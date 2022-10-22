@@ -114,6 +114,15 @@ export function check_if_file(file_path: string): boolean {
 }
 
 /**
+ * Check if a file path is absolute
+ * @param  {string} path Path
+ * @returns {boolean} True if absolute path
+ */
+export function is_absolute(path: string): boolean {
+    return path_lib.isAbsolute(path);
+}
+
+/**
  * Get the absolute path from the current directory
  * @param  {string} current_directory Current directory
  * @param  {string} path Relative/absolute path

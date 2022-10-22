@@ -24,6 +24,15 @@ export enum HDL_LANG {
     NONE = "none"
 }
 
+/** Language */
+export enum LANG {
+    VHDL = "vhdl",
+    VERILOG = "verilog",
+    SYSTEMVERILOG = "systemverilog",
+    CPP = "cpp",
+    PYTHON = "python"
+}
+
 /** HDL extensions */
 export const HDL_EXTENSIONS = {
     VHDL: ['.vhd', '.vho', '.vhdl'],

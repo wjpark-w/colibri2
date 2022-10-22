@@ -77,25 +77,25 @@ describe('Test Python utils', function () {
         equal(result.successful, true);
     });
 
-    it(`Check python3 package and true`, async function () {
-        const package_name = 'time';
-        const opt: python.python_options = {
-            path: "/usr/bin/python"
-        };
-        const result_path = await python.get_python_path(opt);
-        const result = await python.check_python_package(result_path.python_path, package_name);
-        equal(result, true);
-    });
+    // it(`Check python3 package and true`, async function () {
+    //     const package_name = 'time';
+    //     const opt: python.python_options = {
+    //         path: "/usr/bin/python"
+    //     };
+    //     const result_path = await python.get_python_path(opt);
+    //     const result = await python.check_python_package(result_path.python_path, package_name);
+    //     equal(result, true);
+    // });
 
-    it(`Check python3 package and false`, async function () {
-        const package_name = 'time1234';
-        const opt: python.python_options = {
-            path: "/usr/bin/python"
-        };
-        const result_path = await python.get_python_path(opt);
-        const result = await python.check_python_package(result_path.python_path, package_name);
-        equal(result, false);
-    });
+    // it(`Check python3 package and false`, async function () {
+    //     const package_name = 'time1234';
+    //     const opt: python.python_options = {
+    //         path: "/usr/bin/python"
+    //     };
+    //     const result_path = await python.get_python_path(opt);
+    //     const result = await python.check_python_package(result_path.python_path, package_name);
+    //     equal(result, false);
+    // });
 
     it(`Check python3 package list and true`, async function () {
         const package_name = ['time', 'os'];

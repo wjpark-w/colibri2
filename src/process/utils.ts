@@ -16,7 +16,7 @@
 // You should have received a copy of the GNU General Public License
 // along with colibri2.  If not, see <https://www.gnu.org/licenses/>.
 
-import { OS } from "./common";
+import { OS, e_sentence } from "./common";
 import * as os_lib from "os";
 import * as path_lib from 'path';
 import { makeid } from '../utils/common_utils';
@@ -37,6 +37,53 @@ export function get_os(): OS {
     else {
         return OS.MAC;
     }
+}
+
+/**
+ * Get sentence for the current OS
+ * @param  {e_sentence} sentence_type Sentence type
+ * @returns string -> Sentence
+ */
+export function get_sentence_os(sentence_type: e_sentence): string {
+    const os = get_os();
+    if (os === OS.WINDOWS) {
+        return get_sentence_windows(sentence_type);
+    }
+    else {
+        return get_sentence_unix(sentence_type);
+    }
+}
+
+function get_sentence_unix(sentence_type: e_sentence): string {
+    if (sentence_type === e_sentence.MORE) {
+        return ";"
+    }
+    else if (sentence_type === e_sentence.EXPORT) {
+        return "export";
+    }
+    else if (sentence_type === e_sentence.SWITCH) {
+        return "";
+    }
+    else if (sentence_type === e_sentence.FOLDER_SEP) {
+        return "/";
+    }
+    return "";
+}
+
+function get_sentence_windows(sentence_type: e_sentence): string {
+    if (sentence_type === e_sentence.MORE) {
+        return "&&";
+    }
+    else if (sentence_type === e_sentence.EXPORT) {
+        return "set";
+    }
+    else if (sentence_type === e_sentence.SWITCH) {
+        return "/D";
+    }
+    else if (sentence_type === e_sentence.FOLDER_SEP) {
+        return "\\";
+    }
+    return "";
 }
 
 /**
