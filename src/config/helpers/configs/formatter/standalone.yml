@@ -1,0 +1,30 @@
+keyword_case:
+  description: "Keyword case."
+  type: select
+  options:
+    lowercase: "LowerCase"
+    uppercase: "UpperCase"
+  value: "lowercase"
+
+name_case:
+  description: "Type name case."
+  type: select
+  options:
+    lowercase: "LowerCase"
+    uppercase: "UpperCase"
+  value: "lowercase"
+
+align_comments:
+  description: "Align comments."
+  type: boolean
+  value: false
+
+indentation:
+  description: "Indentation."
+  type: string
+  value: "  "
+
+align_generic_port:
+  description: "Align signs in generics and ports."
+  type: boolean
+  value: false

@@ -21,9 +21,9 @@ import * as paht_lib from 'path';
 import * as nunjucks from 'nunjucks';
 
 import { HDL_LANG } from "../common/general";
-import * as common from "./common";
 import * as parser_lib from "../parser/factory";
 import * as common_hdl from "../parser/common";
+import { t_template_options } from "../config/auxiliar_config";
 
 /** Template */
 export class Template_manager {
@@ -42,7 +42,6 @@ export class Template_manager {
         }
         this.language = language;
     }
-
 
     /**
      * Get the text header from a file path
@@ -69,7 +68,6 @@ export class Template_manager {
             return '';
         }
     }
-
 
     /**
      * Gen indent
@@ -109,11 +107,14 @@ export class Template_manager {
      * @param  {common.TEMPLATE_NAME} template_type Template type
      * @param  {common.t_options} options Template options
      */
-    async generate(code: string, template_type: string, options: common.t_options) {
+    async generate(code: string, template_type: string, options: t_template_options) {
         let template = '';
         const code_tree = await this.parse(code);
         if (code_tree === undefined) {
             return template;
+        }
+        if (code_tree.name === '') {
+            return '';
         }
         // Get header
         const header = this.get_header(options.header_file_path);

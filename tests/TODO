@@ -14,6 +14,10 @@
 - Documenter section test custom section
 - Verilog template check
 - GHDL linter falla cuando la descripción tiene ":"
+- En las templates comprobar que el generic no está vacío y el ports también.
+- En las templates cuando falla el parser todo continua y se genera una template vacía.
+- Custom indent en templates dependiendo del lenguaje.
+- Logger para vscode
 
 /home/carlos/repo/colibri2/tests/command/linter/helpers/sample_0.vhd:13:19:error: ':' is expected instead of ';'
 /home/carlos/repo/colibri2/tests/command/linter/helpers/sample_0.vhd:13:19:error: type mark expected in a subtype indication
@@ -23,3 +27,4 @@
 /home/carlos/repo/colibri2/tests/command/linter/helpers/sample_0.vhd:16:20:error: (found: 'end')
 
 - Añadir un logger global
+- Project manager no acepta nombres con espacio?

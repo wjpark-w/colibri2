@@ -4,6 +4,7 @@
     "rootDir": "./src",
     "allowJs": true,
     "declaration": true,
+    "declarationMap": true,
     "target": "ES2019",
     "module": "commonjs",
     "lib": [

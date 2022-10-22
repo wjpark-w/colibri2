@@ -25,6 +25,7 @@ import * as common_hdl from "../parser/common";
 import { HDL_LANG } from "../common/general";
 import * as parser_lib from "../parser/factory";
 import * as css_const_style from "./css";
+import { t_documenter_options } from "../config/auxiliar_config";
 
 type result_type = {
     document: string;
@@ -43,15 +44,16 @@ export class Documenter extends section_creator.Creator {
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     // Save
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    async save_document(code: string, lang: HDL_LANG, configuration: common_documenter.documenter_options,
-        input_path: string, output_path: string): Promise<boolean> {
+    async save_document(code: string, lang: HDL_LANG, configuration: t_documenter_options,
+        input_path: string, output_path: string, output_type: common_documenter.doc_output_type): Promise<boolean> {
 
-        if (configuration.output_type === common_documenter.doc_output_type.SVG) {
+        if (output_type === common_documenter.doc_output_type.SVG) {
             return this.save_svg(code, lang, configuration, output_path);
         }
         else {
             const output_dir = path_lib.dirname(output_path);
-            const result = await this.get_document(code, lang, configuration, true, input_path, output_dir, false);
+            const result = await this.get_document(code, lang, configuration, true, input_path, output_dir, false,
+                output_type);
 
             if (result.error === false) {
                 fs.writeFileSync(output_path, result.document);
@@ -60,7 +62,7 @@ export class Documenter extends section_creator.Creator {
         }
     }
 
-    async save_svg(code: string, lang: HDL_LANG, configuration: common_documenter.documenter_options,
+    async save_svg(code: string, lang: HDL_LANG, configuration: t_documenter_options,
         path: string): Promise<boolean> {
 
         const hdl_element = await this.get_code_tree(code, lang, configuration);
@@ -80,8 +82,9 @@ export class Documenter extends section_creator.Creator {
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     // Get document
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    async get_document(code: string, lang: HDL_LANG, configuration: common_documenter.documenter_options,
-        save: boolean, input_path: string, output_svg_dir: string, extra_top_space: boolean): Promise<result_type> {
+    async get_document(code: string, lang: HDL_LANG, configuration: t_documenter_options,
+        save: boolean, input_path: string, output_svg_dir: string, extra_top_space: boolean,
+        output_type: common_documenter.doc_output_type): Promise<result_type> {
 
         // const svg_dir_path = path_lib.dirname(output_svg_dir);
         // const filename_svg = path_lib.basename(input_path, path_lib.extname(input_path));
@@ -117,66 +120,66 @@ export class Documenter extends section_creator.Creator {
         // Document preparation
         ////////////////////////////////////////////////////////////////////////
         let document = "";
-        if (configuration.output_type === common_documenter.doc_output_type.HTML) {
+        if (output_type === common_documenter.doc_output_type.HTML) {
             document = html;
         }
         ////////////////////////////////////////////////////////////////////////
         // Title section
         ////////////////////////////////////////////////////////////////////////
-        document += this.get_title_section(hdl_element, configuration);
+        document += this.get_title_section(hdl_element, configuration, output_type);
         ////////////////////////////////////////////////////////////////////////
         // Input path section
         ////////////////////////////////////////////////////////////////////////
-        document += this.get_input_section(input_path, configuration);
+        document += this.get_input_section(input_path, configuration, output_type);
         ////////////////////////////////////////////////////////////////////////
         // Info section
         ////////////////////////////////////////////////////////////////////////
-        document += this.get_info_section(hdl_element, configuration);
+        document += this.get_info_section(hdl_element, configuration, output_type);
         ////////////////////////////////////////////////////////////////////////
         // Custom section begin
         ////////////////////////////////////////////////////////////////////////
-        document += this.get_custom_section('custom_section_begin', hdl_element, configuration, input_path);
+        document += this.get_custom_section('custom_section_begin', hdl_element, input_path, output_type);
         ////////////////////////////////////////////////////////////////////////
         // Diagram
         ////////////////////////////////////////////////////////////////////////
-        document += this.get_diagram_section(hdl_element, configuration, output_svg_dir);
+        document += this.get_diagram_section(hdl_element, configuration, output_svg_dir, output_type);
         ////////////////////////////////////////////////////////////////////////
         // Description
         ////////////////////////////////////////////////////////////////////////
-        document += this.get_description_section(hdl_element, configuration, output_svg_dir);
+        document += this.get_description_section(hdl_element, configuration, output_svg_dir, output_type);
         ////////////////////////////////////////////////////////////////////////
         // Interface section
         ////////////////////////////////////////////////////////////////////////
-        document += this.get_interface_section(hdl_element, configuration);
+        document += this.get_interface_section(hdl_element, configuration, output_type);
         ////////////////////////////////////////////////////////////////////////
         // Generic and port
         ////////////////////////////////////////////////////////////////////////
-        document += this.get_in_out_section(hdl_element, configuration);
+        document += this.get_in_out_section(hdl_element, configuration, output_type);
         ////////////////////////////////////////////////////////////////////////
         // Signal and constant
         ////////////////////////////////////////////////////////////////////////
-        document += this.get_signal_constant_section(hdl_element, configuration);
+        document += this.get_signal_constant_section(hdl_element, configuration, output_type);
         ////////////////////////////////////////////////////////////////////////
         // Function
         ////////////////////////////////////////////////////////////////////////
-        document += this.get_function_section(hdl_element, configuration);
+        document += this.get_function_section(hdl_element, configuration, output_type);
         ////////////////////////////////////////////////////////////////////////
         // Processes
         ////////////////////////////////////////////////////////////////////////
-        document += this.get_process_section(hdl_element, configuration);
+        document += this.get_process_section(hdl_element, configuration, output_type);
         ////////////////////////////////////////////////////////////////////////
         // Instantiation
         ////////////////////////////////////////////////////////////////////////
-        document += this.get_instantiation_section(hdl_element, configuration);
+        document += this.get_instantiation_section(hdl_element, configuration, output_type);
         ////////////////////////////////////////////////////////////////////////
         // State machine
         ////////////////////////////////////////////////////////////////////////
         const fsm_list = await this.get_fsm(code, lang, configuration);
-        document += this.get_fsm_section(fsm_list, hdl_element, configuration, output_svg_dir);
+        document += this.get_fsm_section(fsm_list, hdl_element, configuration, output_svg_dir, output_type);
         ////////////////////////////////////////////////////////////////////////
         // Custom section end
         ////////////////////////////////////////////////////////////////////////
-        document += this.get_custom_section('custom_section_end', hdl_element, configuration, input_path);
+        document += this.get_custom_section('custom_section_end', hdl_element, input_path, output_type);
         ////////////////////////////////////////////////////////////////////////
         // Interface section
         ////////////////////////////////////////////////////////////////////////
@@ -184,7 +187,7 @@ export class Documenter extends section_creator.Creator {
         ////////////////////////////////////////////////////////////////////////
         // End
         ////////////////////////////////////////////////////////////////////////
-        if (configuration.output_type === common_documenter.doc_output_type.HTML) {
+        if (output_type === common_documenter.doc_output_type.HTML) {
             document += `
     </article class="markdown-body">
     </body>
@@ -199,7 +202,7 @@ export class Documenter extends section_creator.Creator {
     ////////////////////////////////////////////////////////////////////////////
     // Parsers
     ////////////////////////////////////////////////////////////////////////////
-    private async get_code_tree(code: string, lang: HDL_LANG, configuration: common_documenter.documenter_options) {
+    private async get_code_tree(code: string, lang: HDL_LANG, configuration: t_documenter_options) {
         const parser = await this.get_parser(lang);
         let symbol = configuration.verilog_symbol;
         if (lang === HDL_LANG.VHDL) {
@@ -238,7 +241,7 @@ export class Documenter extends section_creator.Creator {
         }
     }
 
-    private async get_fsm(code: string, lang: HDL_LANG, configuration: common_documenter.documenter_options) {
+    private async get_fsm(code: string, lang: HDL_LANG, configuration: t_documenter_options) {
         let symbol = configuration.verilog_symbol;
         if (lang === HDL_LANG.VHDL) {
             symbol = configuration.vhdl_symbol;

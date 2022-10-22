@@ -18,10 +18,13 @@
 
 import { Template_manager } from "../../src/template/manager";
 import * as common from "../../src/template/common";
+import * as cfg from "../../src/config/config_declaration";
+import * as cfg_aux from "../../src/config/auxiliar_config";
+import { read_file_sync } from "../../src/utils/file_utils";
 import { HDL_LANG } from "../../src/common/general";
 import { equal } from "assert";
-import * as fs from 'fs';
 import * as paht_lib from 'path';
+import * as fs from 'fs';
 
 const vhdl_code = `
 library ieee;
@@ -85,11 +88,11 @@ language_array.forEach(language => {
                     code_hdl = verilog_code;
                 }
 
-                const options: common.t_options = {
+                const options: cfg_aux.t_template_options = {
                     header_file_path: "",
                     indent_char: "  ",
-                    instance_style: common.TYPE_INSTANCE_DECLARATION.INLINE,
-                    clock_generation_style: common.TYPE_CLOCK_GENERATION_STYLE.IFELSE
+                    instance_style: cfg.e_templates_general_instance_style.inline,
+                    clock_generation_style: cfg.e_templates_general_clock_generation_style.ifelse
                 };
 
                 const template_manager = await generate_template_manager(language);
@@ -99,7 +102,7 @@ language_array.forEach(language => {
 
                 //Get exepcted template
                 const input_path = paht_lib.join(__dirname, 'expected', `${language}_${template_type.id}.${language}`);
-                const expected = fs.readFileSync(input_path);
+                const expected = read_file_sync(input_path);
 
                 equal(template, expected);
             });

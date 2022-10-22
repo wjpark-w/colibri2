@@ -48,7 +48,7 @@ export async function get_python_path(opt: python_options): Promise<python_resul
     else {
         binary = [opt.path, join(opt.path, 'python'), join(opt.path, 'python3'), 'python3', 'python'];
     }
-    const result = find_python3_in_list(binary);
+    const result = await find_python3_in_list(binary);
     return result;
 }
 
@@ -144,4 +144,33 @@ export async function exec_python_script(python_path: string, python_script_path
     const p = new Process();
     const result = await p.exec_wait(cmd);
     return result;
+}
+
+/**
+ * Execute a Python3 script from a path async
+ * @param  {string} python_path Python executable path
+ * @param  {string} python_script_path Python script to execute
+ * @param  {string} args Arguments for the script
+ */
+export function exec_python_script_async(python_path: string, python_script_path: string, args: string,
+    pre_script: string, working_directory: string,
+    callback: (result: common.p_result) => void, callback_stream: (stream_c: any) => void) {
+
+    const opt: python_options = {
+        path: python_path
+    };
+
+    let opt_exec: any = undefined;
+    if (working_directory !== "") {
+        opt_exec = { cwd: working_directory };
+    }
+
+    get_python_path(opt).then(function (result: python_result) {
+        const cmd = `${pre_script} ${result.python_path} "${python_script_path}" ${args}`;
+        const p = new Process();
+        const exec_i = p.exec(cmd, opt_exec, (result: common.p_result) => {
+            callback(result);
+        });
+        callback_stream(exec_i);
+    });
 }
