@@ -20,55 +20,49 @@
 import { Ghdl } from "./ghdl";
 import { Icarus } from "./icarus";
 import { Verilator } from "./verilator";
-import { Xvhdl } from "./xvhdl";
-import { Xvlog } from "./xvlog";
+import { Vivado } from "./vivado";
 import { Modelsim } from "./modelsim";
 import { Verible } from "./verible";
 import * as common from "./common";
+import * as cfg from "../config/config_declaration";
 
 /** Linter */
 export class Linter {
-    // private linter_inst: Ghdl | Icarus | Modelsim | Verilator | Xvlog | Xvhdl | Verible;
-    private linter_inst: any;
 
-    /**
-     * @param  {common.LINTER_NAME} linter_name Linter name
-     */
-    constructor(linter_name: string) {
-        if (linter_name === common.LINTER_NAME.GHDL) {
-            this.linter_inst = new Ghdl();
+    private get_linter(linter_name: common.t_linter_name) {
+
+        if (linter_name === cfg.e_linter_general_linter_vhdl.ghdl) {
+            return new Ghdl();
         }
-        else if (linter_name === common.LINTER_NAME.ICARUS) {
-            this.linter_inst = new Icarus();
+        else if (linter_name === cfg.e_linter_general_linter_vhdl.vivado) {
+            return new Vivado();
         }
-        else if (linter_name === common.LINTER_NAME.MODELSIM) {
-            this.linter_inst = new Modelsim();
+        else if (linter_name === cfg.e_linter_general_linter_vhdl.modelsim) {
+            return new Modelsim();
         }
-        else if (linter_name === common.LINTER_NAME.VERILATOR) {
-            this.linter_inst = new Verilator();
+        else if (linter_name === cfg.e_linter_general_linter_verilog.icarus) {
+            return new Icarus();
         }
-        else if (linter_name === common.LINTER_NAME.XVLOG) {
-            this.linter_inst = new Xvlog();
+        else if (linter_name === cfg.e_linter_general_linter_verilog.modelsim) {
+            return new Modelsim();
         }
-        else if (linter_name === common.LINTER_NAME.XVHDL) {
-            this.linter_inst = new Xvhdl();
+        else if (linter_name === cfg.e_linter_general_linter_verilog.verilator) {
+            return new Verilator();
         }
-        // else if (linter_name === T_LINTER.VSG) {
-        //     this.linter_inst = new Vsg();
-        // }
-        else if (linter_name === common.LINTER_NAME.VERIBLE) {
-            this.linter_inst = new Verible();
+        else if (linter_name === cfg.e_linter_general_linter_verilog.vivado) {
+            return new Vivado();
         }
-        // else if (linter_name === T_LINTER.SVLINT) {
-        //     this.linter_inst = new Svlint();
-        // }
+        else if (linter_name === cfg.e_linter_general_lstyle_verilog.verible) {
+            return new Verible();
+        }
         else {
-            this.linter_inst = new Ghdl();
+            return new Ghdl();
         }
     }
 
-    parse_output(output: string, file: string) {
-        const errors = this.linter_inst.parse_output(output, file);
+    parse_output(linter_name: common.t_linter_name, output: string, file: string) {
+        const linter = this.get_linter(linter_name);
+        const errors = linter.parse_output(output, file);
         return errors;
     }
 
@@ -77,8 +71,9 @@ export class Linter {
      * @param  {string} file File path to lint
      * @param  {common.l_options} options Linter options
      */
-    async lint_from_file(file: string, options: common.l_options) {
-        const errors = await this.linter_inst.lint_from_file(file, options);
+    async lint_from_file(linter_name: common.t_linter_name, file: string, options: common.l_options) {
+        const linter = this.get_linter(linter_name);
+        const errors = await linter.lint_from_file(file, options);
         return errors;
     }
 
@@ -87,9 +82,9 @@ export class Linter {
      * @param  {string} code Code to lint
      * @param  {common.l_options} options Linter options
      */
-    async lint_from_code(code: string, options: common.l_options) {
-        const errors = await this.linter_inst.lint_from_code(code, options);
+    async lint_from_code(linter_name: common.t_linter_name, code: string, options: common.l_options) {
+        const linter = this.get_linter(linter_name);
+        const errors = await linter.lint_from_code(code, options);
         return errors;
     }
-
 }

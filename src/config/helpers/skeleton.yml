@@ -59,9 +59,38 @@ formatter:
 # Linter
 ############################################
 linter:
-  title: Linters settings
+  title: Linter settings
   description:
-  general: ./configs/linter.yml
+  general: ./configs/linter/general.yml
+  secondary:
+    ghdl:
+      title: GHDL linter
+      description: ""
+      page: ./configs/linter/ghdl.yml
+    icarus:
+      title: Icarus linter
+      description: ""
+      page: ./configs/linter/icarus.yml
+    modelsim:
+      title: ModelSim linter
+      description: ""
+      page: ./configs/linter/modelsim.yml
+    verible:
+      title: Verible linter
+      description: ""
+      page: ./configs/linter/verible.yml
+    verilator:
+      title: Verilator linter
+      description: ""
+      page: ./configs/linter/verilator.yml
+    vivado:
+      title: Vivado linter
+      description: ""
+      page: ./configs/linter/vivado.yml
+    vsg:
+      title: VSG linter
+      description: ""
+      page: ./configs/linter/vsg.yml
 
 ############################################
 # Schematic

@@ -25,10 +25,43 @@ import { Linter } from "../../linter/linter";
 import * as linter_common from '../../linter/common';
 import * as logger from '../../logger/logger';
 import * as reporter from '../../reporter/reporter';
+import * as cfg from '../../config/config_declaration';
 
 function get_linters(): string[] {
-    const key_list = Object.values(linter_common.LINTER_NAME);
+    const key_list = [
+        cfg.e_linter_general_linter_vhdl.ghdl,
+        cfg.e_linter_general_linter_vhdl.modelsim,
+        cfg.e_linter_general_linter_vhdl.vivado,
+        cfg.e_linter_general_linter_verilog.icarus,
+        cfg.e_linter_general_linter_verilog.verilator,
+        cfg.e_linter_general_lstyle_vhdl.vsg,
+        cfg.e_linter_general_lstyle_verilog.verible,
+    ];
     return key_list;
+}
+
+function get_linter_name(name_str: string): linter_common.t_linter_name {
+    if (name_str === cfg.e_linter_general_linter_vhdl.ghdl) {
+        return cfg.e_linter_general_linter_vhdl.ghdl;
+    }
+    else if (name_str === cfg.e_linter_general_linter_vhdl.modelsim) {
+        return cfg.e_linter_general_linter_vhdl.modelsim;
+    }
+    else if (name_str === cfg.e_linter_general_linter_vhdl.vivado) {
+        return cfg.e_linter_general_linter_vhdl.vivado;
+    }
+    else if (name_str === cfg.e_linter_general_linter_verilog.icarus) {
+        return cfg.e_linter_general_linter_verilog.icarus;
+    }
+    else if (name_str === cfg.e_linter_general_lstyle_vhdl.vsg) {
+        return cfg.e_linter_general_lstyle_vhdl.vsg;
+    }
+    else if (name_str === cfg.e_linter_general_lstyle_verilog.verible) {
+        return cfg.e_linter_general_lstyle_verilog.verible;
+    }
+    else {
+        return cfg.e_linter_general_linter_vhdl.ghdl;
+    }
 }
 
 function get_norm_error(filename: string, error_list: linter_common.l_error[])
@@ -318,7 +351,7 @@ export default class MyCLI extends Command {
         //Input
         const hdl_file_list = await command_utils.get_files_from_input(input_path, cmd_current_dir);
 
-        const linter_manager = new Linter(linter_name);
+        const linter_manager = new Linter();
         const linter_options: linter_common.l_options = {
             path: linter_path,
             argument: linter_arguments
@@ -327,7 +360,8 @@ export default class MyCLI extends Command {
         const error_list_end: reporter.i_file_error[] = [];
         for (let i = 0; i < hdl_file_list.length; i++) {
             const hdl_file = hdl_file_list[i];
-            const error_list = await linter_manager.lint_from_file(hdl_file.filename, linter_options);
+            const error_list = await linter_manager.lint_from_file(get_linter_name(linter_name),
+                hdl_file.filename, linter_options);
             const const_error_list_norm = get_norm_error(hdl_file.filename, error_list);
             error_list_end.push(const_error_list_norm);
         }

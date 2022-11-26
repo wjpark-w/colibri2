@@ -20,7 +20,7 @@ import { expect, test } from '@oclif/test';
 import * as path_lib from 'path';
 import * as test_utils from '../../common_utils';
 import * as file_utils from '../../../src/utils/file_utils';
-import * as linter_common from '../../../src/linter/common';
+import * as cfg from '../../../src/config/config_declaration';
 
 const C_OUTPUT_BASE_PATH = path_lib.join(__dirname, 'out');
 test_utils.setup_folder(C_OUTPUT_BASE_PATH);
@@ -71,7 +71,7 @@ describe('teroshdl:linter', () => {
         junit: current_path_junit,
         json_format: current_path_json,
         compact: current_path_compact,
-        linter: linter_common.LINTER_NAME.GHDL,
+        linter: cfg.e_linter_general_linter_vhdl.ghdl,
         linter_arguments: '',
         linter_path: ''
     };

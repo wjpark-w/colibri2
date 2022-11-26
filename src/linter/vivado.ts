@@ -21,27 +21,53 @@ import { get_os } from "../process/utils";
 import { Process } from "../process/process";
 import { OS } from "../process/common";
 
+import { get_language } from "../common/utils";
+import { HDL_LANG } from "../common/general";
+
 import { Base_linter } from "./base_linter";
 import * as common from "./common";
 
-export class Xvhdl extends Base_linter {
+export class Vivado extends Base_linter {
     binary_linux = "xvhdl -nolog";
     binary_mac = "xvhdl -nolog";
     binary_windows = "xvhdl -nolog";
 
+    sv_options = "--sv";
+
     constructor() {
         super();
+    }
+
+    public set_binary(file: string) {
+        const file_lang = get_language(file);
+        let cmd = "";
+        if (file_lang === HDL_LANG.VHDL) {
+            cmd = `xvhdl -nolog`;
+        }
+        else if (file_lang === HDL_LANG.SYSTEMVERILOG) {
+            cmd = `xvlog -nolog`;
+        }
+        else {
+            cmd = ``;
+        }
+        this.binary_linux = cmd;
+        this.binary_mac = cmd;
+        this.binary_windows = cmd;
     }
 
     async delete_previus_lint() {
         const os = get_os();
         const p = new Process();
         if (os === OS.WINDOWS) {
-            const command = 'del xvhdl.pb && del xvhdl.log && rmdir xsim.dir';
+            let command = 'del xvhdl.pb && del xvhdl.log && rmdir xsim.dir';
+            await p.exec_wait(command);
+            command = 'del xvlog.pb && del xvlog.log && rmdir xsim.dir';
             await p.exec_wait(command);
         }
         else {
-            const command = 'rm xvhdl.pb; rm xvhdl.log; rm -R xsim.dir';
+            let command = 'rm xvhdl.pb; rm xvhdl.log; rm -R xsim.dir';
+            await p.exec_wait(command);
+            command = 'rm xvlog.pb; rm xvlog.log; rm -R xsim.dir';
             await p.exec_wait(command);
         }
     }
@@ -78,6 +104,7 @@ export class Xvhdl extends Base_linter {
     }
 
     async lint(file: string, options: common.l_options): Promise<common.l_error[]> {
+        this.set_binary(file);
         const result = await this.exec_linter(file, options);
         file = file.replace(/\\ /g, ' ');
         const errors_str = result.stdout;

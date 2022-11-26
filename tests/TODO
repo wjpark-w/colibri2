@@ -18,6 +18,17 @@
 - En las templates cuando falla el parser todo continua y se genera una template vacía.
 - Custom indent en templates dependiendo del lenguaje.
 - Logger para vscode
+- Repasar: 
+    "activationEvents": [
+        "*",
+https://code.visualstudio.com/api/references/activation-events#Start-up
+
+- Comprobar que todo se actualiza cuando cambia la configuración.
+- Comprobar que hay log cuando hay acciones en vscode.
+- Schematic con project maanger
+- Revisar todos los paths para ficheros para windows
+- En vscode-teroshdl está fija la configuración
+
 
 /home/carlos/repo/colibri2/tests/command/linter/helpers/sample_0.vhd:13:19:error: ':' is expected instead of ';'
 /home/carlos/repo/colibri2/tests/command/linter/helpers/sample_0.vhd:13:19:error: type mark expected in a subtype indication

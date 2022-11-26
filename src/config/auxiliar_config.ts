@@ -18,6 +18,34 @@
 
 import * as cfg from './config_declaration';
 
+export type t_linter_vhdl_options = {
+    /** Linter name */
+    name: cfg.e_linter_general_linter_vhdl;
+    /** Linter arguments */
+    arguments: string;
+}
+
+export type t_linter_verilog_options = {
+    /** Linter name */
+    name: cfg.e_linter_general_linter_verilog;
+    /** Linter arguments */
+    arguments: string;
+}
+
+export type t_style_vhdl_options = {
+    /** Style linter name */
+    name: cfg.e_linter_general_lstyle_vhdl;
+    /** Linter arguments */
+    arguments: string;
+}
+
+export type t_style_verilog_options = {
+    /** Style linter name */
+    name: cfg.e_linter_general_lstyle_verilog;
+    /** Linter arguments */
+    arguments: string;
+}
+
 export type t_exec_config = {
     execution_mode: cfg.e_tools_general_execution_mode;
     python_path: string;

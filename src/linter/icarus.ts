@@ -27,7 +27,6 @@ export class Icarus extends Base_linter {
 
     constructor() {
         super();
-
     }
 
     delete_previus_lint() {

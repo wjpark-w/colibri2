@@ -73,7 +73,7 @@ export class Documenter extends section_creator.Creator {
         const svg_diagram_str = await this.get_diagram_svg_from_code_tree(hdl_element);
         await fs.writeFileSync(path, svg_diagram_str);
         //FSM
-        const fsm_list = this.get_fsm(code, lang, configuration);
+        const fsm_list = this.get_fsm_svg(code, lang, configuration);
         await this.save_fsm(fsm_list, hdl_element, path);
         // await this.save_wavedrom(code_tree, path);
         return true;
@@ -174,7 +174,7 @@ export class Documenter extends section_creator.Creator {
         ////////////////////////////////////////////////////////////////////////
         // State machine
         ////////////////////////////////////////////////////////////////////////
-        const fsm_list = await this.get_fsm(code, lang, configuration);
+        const fsm_list = await this.get_fsm_svg(code, lang, configuration);
         document += this.get_fsm_section(fsm_list, hdl_element, configuration, output_svg_dir, output_type);
         ////////////////////////////////////////////////////////////////////////
         // Custom section end
@@ -241,13 +241,18 @@ export class Documenter extends section_creator.Creator {
         }
     }
 
-    private async get_fsm(code: string, lang: HDL_LANG, configuration: t_documenter_options) {
+    public async get_fsm(code: string, lang: HDL_LANG, configuration: t_documenter_options) {
         let symbol = configuration.verilog_symbol;
         if (lang === HDL_LANG.VHDL) {
             symbol = configuration.vhdl_symbol;
         }
         const parser = await this.get_parser(lang);
         const fsm_list = await parser.get_svg_sm(code, symbol);
+        return fsm_list;
+    }
+
+    private async get_fsm_svg(code: string, lang: HDL_LANG, configuration: t_documenter_options) {
+        const fsm_list = await this.get_fsm(code, lang, configuration);
         return fsm_list.svg;
     }
 }

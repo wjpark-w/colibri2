@@ -5,11 +5,11 @@ linter_vhdl:
     disabled: "Disabled"
     ghdl: "GHDL"
     modelsim: "Modelsim"
-    xvhdl: "Vivado (xvhdl)"
+    vivado: "Vivado (xvhdl)"
     none: "VHDL-LS"
-  value: "disabled"
+  value: "ghdl"
 
-llinter_verilog:
+linter_verilog:
   description: "Verilog/SV linter:"
   type: select
   options:
@@ -17,8 +17,8 @@ llinter_verilog:
     icarus: "Icarus"
     modelsim: "Modelsim"
     verilator: "Verilator"
-    xvlog: "Vivado (xvlog)"
-  value: "disabled"
+    vivado: "Vivado (xvlog)"
+  value: "modelsim"
 
 lstyle_verilog:
   description: "Verilog/SV style checker:"

@@ -30,6 +30,11 @@ export abstract class Base_linter {
     abstract binary_mac: string;
     abstract binary_windows: string;
 
+    parse_output(_output: string, _file: string): common.l_error[] {
+        const errors: common.l_error[] = [];
+        return errors;
+    }
+
     async lint_from_file(file: string, options: common.l_options) {
         const normalized_file = file.replace(/ /g, '\\ ');
         const errors = await this.lint(normalized_file, options);

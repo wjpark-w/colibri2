@@ -16,18 +16,12 @@
 // You should have received a copy of the GNU General Public License
 // along with colibri2.  If not, see <https://www.gnu.org/licenses/>.
 
+import * as cfg from "../config/config_declaration";
+
+
 /** Linter name */
-export enum LINTER_NAME {
-    GHDL = "ghdl",
-    ICARUS = "icarus",
-    MODELSIM = "modelsim",
-    SVLINT = "svling",
-    VERIBLE = "verilbe",
-    VERILATOR = "verilator",
-    VSG = "vsg",
-    XVHDL = "xvhdl",
-    XVLOG = "xvlog",
-}
+export type t_linter_name = cfg.e_linter_general_linter_vhdl | cfg.e_linter_general_linter_verilog |
+    cfg.e_linter_general_lstyle_vhdl | cfg.e_linter_general_lstyle_verilog;
 
 /** Linter severity of error */
 export enum LINTER_ERROR_SEVERITY {

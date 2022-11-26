@@ -16,7 +16,7 @@
 // You should have received a copy of the GNU General Public License
 // along with colibri2.  If not, see <https://www.gnu.org/licenses/>.
 
-import { get_default_config, e_config, e_tools_general_select_tool } from './config_declaration';
+import { get_default_config, e_config, e_tools_general_select_tool, e_linter_general_linter_vhdl, e_linter_general_linter_verilog, e_linter_general_lstyle_vhdl, e_linter_general_lstyle_verilog } from './config_declaration';
 import * as cfg_aux from "./auxiliar_config";
 
 export class Config_manager {
@@ -28,6 +28,77 @@ export class Config_manager {
 
     public get_config(): e_config {
         return this.config;
+    }
+
+    public get_vhdl_linter_name() {
+        return this.config.linter.general.linter_vhdl;
+    }
+
+    public get_verilog_linter_name() {
+        return this.config.linter.general.linter_verilog;
+    }
+
+    public get_vhdl_style_linter_name() {
+        return this.config.linter.general.lstyle_vhdl;
+    }
+
+    public get_verilog_style_linter_name() {
+        return this.config.linter.general.lstyle_verilog;
+    }
+
+    public get_linter_config_vhdl(): string {
+        const linter_name = this.config.linter.general.linter_vhdl;
+        if (linter_name === e_linter_general_linter_vhdl.ghdl) {
+            return this.config.linter.ghdl.arguments;
+        }
+        else if (linter_name === e_linter_general_linter_vhdl.modelsim) {
+            return this.config.linter.modelsim.vhdl_arguments;
+        }
+        else if (linter_name === e_linter_general_linter_vhdl.vivado) {
+            return this.config.linter.vivado.vhdl_arguments;
+        }
+        else {
+            return "";
+        }
+    }
+
+    public get_linter_config_verilog(): string {
+        const linter_name = this.config.linter.general.linter_verilog;
+        if (linter_name === e_linter_general_linter_verilog.icarus) {
+            return this.config.linter.icarus.arguments;
+        }
+        else if (linter_name === e_linter_general_linter_verilog.modelsim) {
+            return this.config.linter.modelsim.verilog_arguments;
+        }
+        else if (linter_name === e_linter_general_linter_verilog.verilator) {
+            return this.config.linter.verilator.arguments;
+        }
+        else if (linter_name === e_linter_general_linter_verilog.vivado) {
+            return this.config.linter.vivado.verilog_arguments;
+        }
+        else {
+            return "";
+        }
+    }
+
+    public get_style_linter_config_vhdl(): string {
+        const linter_name = this.config.linter.general.lstyle_vhdl;
+        if (linter_name === e_linter_general_lstyle_vhdl.vsg) {
+            return this.config.linter.vsg.arguments;
+        }
+        else {
+            return "";
+        }
+    }
+
+    public get_style_linter_config_verilog(): string {
+        const linter_name = this.config.linter.general.lstyle_verilog;
+        if (linter_name === e_linter_general_lstyle_verilog.verible) {
+            return this.config.linter.verible.arguments;
+        }
+        else {
+            return "";
+        }
     }
 
     public get_exec_config(): cfg_aux.t_exec_config {

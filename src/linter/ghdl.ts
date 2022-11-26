@@ -40,7 +40,6 @@ export class Ghdl extends Base_linter {
             file = file.replace(/\\ /g, ' ');
             const errors_str = result.stderr;
 
-
             // eslint-disable-next-line max-len
             const regex = /^(?<filename>.*):(?=\d)(?<line_number>\d+):(?<column_number>\d+):((?<is_warning>warning:)\s*|\s*)(?<error_message>.*)/gm;
             let m;

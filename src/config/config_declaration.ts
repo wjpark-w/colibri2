@@ -37,6 +37,13 @@ export type e_config = {
     }
     "linter" : {
         "general" : e_linter_general,
+        "ghdl" : e_linter_ghdl,
+        "icarus" : e_linter_icarus,
+        "modelsim" : e_linter_modelsim,
+        "verible" : e_linter_verible,
+        "verilator" : e_linter_verilator,
+        "vivado" : e_linter_vivado,
+        "vsg" : e_linter_vsg,
     }
     "schematic" : {
         "general" : e_schematic_general,
@@ -140,9 +147,39 @@ export type e_formatter_svg = {
     
 export type e_linter_general = {
     linter_vhdl : e_linter_general_linter_vhdl,
-    llinter_verilog : e_linter_general_llinter_verilog,
+    linter_verilog : e_linter_general_linter_verilog,
     lstyle_verilog : e_linter_general_lstyle_verilog,
     lstyle_vhdl : e_linter_general_lstyle_vhdl,
+};
+    
+export type e_linter_ghdl = {
+    arguments : string,
+};
+    
+export type e_linter_icarus = {
+    arguments : string,
+};
+    
+export type e_linter_modelsim = {
+    vhdl_arguments : string,
+    verilog_arguments : string,
+};
+    
+export type e_linter_verible = {
+    arguments : string,
+};
+    
+export type e_linter_verilator = {
+    arguments : string,
+};
+    
+export type e_linter_vivado = {
+    vhdl_arguments : string,
+    verilog_arguments : string,
+};
+    
+export type e_linter_vsg = {
+    arguments : string,
 };
     
 export type e_schematic_general = {
@@ -185,14 +222,12 @@ export type e_tools_ghdl = {
     waveform : e_tools_ghdl_waveform,
     analyze_options : [],
     run_options : [],
-    linter_options : [],
 };
     
 export type e_tools_icarus = {
     installation_path : string,
     timescale : string,
     iverilog_options : [],
-    linter_options : [],
 };
     
 export type e_tools_icestorm = {
@@ -226,7 +261,6 @@ export type e_tools_modelsim = {
     vcom_options : [],
     vlog_options : [],
     vsim_options : [],
-    linter_options : [],
 };
     
 export type e_tools_morty = {
@@ -320,7 +354,6 @@ export type e_tools_verilator = {
     verilator_options : [],
     make_options : [],
     run_options : [],
-    linter_options : [],
 };
     
 export type e_tools_vivado = {
@@ -330,8 +363,6 @@ export type e_tools_vivado = {
     pnr : e_tools_vivado_pnr,
     jtag_freq : number,
     hw_target : string,
-    linter_options_xvlog : [],
-    linter_options_xvhdl : [],
 };
     
 export type e_tools_vunit = {
@@ -442,15 +473,15 @@ export enum e_linter_general_linter_vhdl {
     disabled = "disabled",
     ghdl = "ghdl",
     modelsim = "modelsim",
-    xvhdl = "xvhdl",
+    vivado = "vivado",
     none = "none",
 }
-export enum e_linter_general_llinter_verilog {
+export enum e_linter_general_linter_verilog {
     disabled = "disabled",
     icarus = "icarus",
     modelsim = "modelsim",
     verilator = "verilator",
-    xvlog = "xvlog",
+    vivado = "vivado",
 }
 export enum e_linter_general_lstyle_verilog {
     verible = "verible",
@@ -641,10 +672,33 @@ export function get_default_config(): e_config {
         },
         linter: {
             general: {
-                linter_vhdl : e_linter_general_linter_vhdl.disabled,
-                llinter_verilog : e_linter_general_llinter_verilog.disabled,
+                linter_vhdl : e_linter_general_linter_vhdl.ghdl,
+                linter_verilog : e_linter_general_linter_verilog.modelsim,
                 lstyle_verilog : e_linter_general_lstyle_verilog.disabled,
                 lstyle_vhdl : e_linter_general_lstyle_vhdl.disabled,
+            },
+            ghdl: {
+                arguments : "",
+            },
+            icarus: {
+                arguments : "",
+            },
+            modelsim: {
+                vhdl_arguments : "",
+                verilog_arguments : "",
+            },
+            verible: {
+                arguments : "",
+            },
+            verilator: {
+                arguments : "",
+            },
+            vivado: {
+                vhdl_arguments : "",
+                verilog_arguments : "",
+            },
+            vsg: {
+                arguments : "",
             },
         },
         schematic: {
@@ -686,13 +740,11 @@ export function get_default_config(): e_config {
                 waveform : e_tools_ghdl_waveform.vcd,
                 analyze_options : [],
                 run_options : [],
-                linter_options : [],
             },
             icarus: {
                 installation_path : "",
                 timescale : "",
                 iverilog_options : [],
-                linter_options : [],
             },
             icestorm: {
                 installation_path : "",
@@ -722,7 +774,6 @@ export function get_default_config(): e_config {
                 vcom_options : [],
                 vlog_options : [],
                 vsim_options : [],
-                linter_options : [],
             },
             morty: {
                 installation_path : "",
@@ -804,7 +855,6 @@ export function get_default_config(): e_config {
                 verilator_options : [],
                 make_options : [],
                 run_options : [],
-                linter_options : [],
             },
             vivado: {
                 installation_path : "",
@@ -813,8 +863,6 @@ export function get_default_config(): e_config {
                 pnr : e_tools_vivado_pnr.vivado,
                 jtag_freq : 10000,
                 hw_target : "",
-                linter_options_xvlog : [],
-                linter_options_xvhdl : [],
             },
             vunit: {
                 installation_path : "",
