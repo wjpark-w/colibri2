@@ -20,9 +20,11 @@
 const fs = require("fs");
 const path_lib = require("path");
 import { Base_formatter } from "./base_formatter";
+import * as file_utils from "../utils/file_utils";
 import * as utils from "../process/utils";
 import { Process } from "../process/process";
 import * as common from "./common";
+import * as cfg from "../config/config_declaration";
 
 export class Verible extends Base_formatter {
     private binary = 'verible-verilog-format';
@@ -31,9 +33,10 @@ export class Verible extends Base_formatter {
         super();
     }
 
-    async format_from_code(code: string, opt: common.verible_options): Promise<common.f_result> {
+    async format_from_code(code: string, opt: cfg.e_formatter_verible): Promise<common.f_result> {
         const temp_file = await utils.create_temp_file(code);
         const formatted_code = await this.format(temp_file, opt);
+        file_utils.remove_file(temp_file);
         return formatted_code;
     }
 
@@ -53,9 +56,9 @@ export class Verible extends Base_formatter {
         return '';
     }
 
-    private async format(file: string, opt: common.verible_options) {
+    public async format(file: string, opt: cfg.e_formatter_verible) {
         const path_bin = await this.get_path(opt.path);
-        const command = `${path_bin} ${opt.arguments} `;
+        const command = `${path_bin} ${opt.format_args} `;
 
         const P = new Process();
         const exec_result = await P.exec_wait(command);

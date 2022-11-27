@@ -28,7 +28,7 @@ https://code.visualstudio.com/api/references/activation-events#Start-up
 - Schematic con project maanger
 - Revisar todos los paths para ficheros para windows
 - En vscode-teroshdl está fija la configuración
-
+- console.log en todas las cosas de vscode
 
 /home/carlos/repo/colibri2/tests/command/linter/helpers/sample_0.vhd:13:19:error: ':' is expected instead of ';'
 /home/carlos/repo/colibri2/tests/command/linter/helpers/sample_0.vhd:13:19:error: type mark expected in a subtype indication

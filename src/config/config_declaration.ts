@@ -130,15 +130,23 @@ export type e_formatter_s3sv = {
     
 export type e_formatter_verible = {
     path : string,
-    format_args : [],
+    format_args : string,
 };
     
 export type e_formatter_standalone = {
     keyword_case : e_formatter_standalone_keyword_case,
     name_case : e_formatter_standalone_name_case,
-    align_comments : boolean,
     indentation : string,
-    align_generic_port : boolean,
+    align_port_generic : boolean,
+    align_comment : boolean,
+    remove_comments : boolean,
+    remove_reports : boolean,
+    check_alias : boolean,
+    new_line_after_then : e_formatter_standalone_new_line_after_then,
+    new_line_after_semicolon : e_formatter_standalone_new_line_after_semicolon,
+    new_line_after_else : e_formatter_standalone_new_line_after_else,
+    new_line_after_port : e_formatter_standalone_new_line_after_port,
+    new_line_after_generic : e_formatter_standalone_new_line_after_generic,
 };
     
 export type e_formatter_svg = {
@@ -469,6 +477,31 @@ export enum e_formatter_standalone_name_case {
     lowercase = "lowercase",
     uppercase = "uppercase",
 }
+export enum e_formatter_standalone_new_line_after_then {
+    new_line = "new_line",
+    no_new_line = "no_new_line",
+    none = "none",
+}
+export enum e_formatter_standalone_new_line_after_semicolon {
+    new_line = "new_line",
+    no_new_line = "no_new_line",
+    none = "none",
+}
+export enum e_formatter_standalone_new_line_after_else {
+    new_line = "new_line",
+    no_new_line = "no_new_line",
+    none = "none",
+}
+export enum e_formatter_standalone_new_line_after_port {
+    new_line = "new_line",
+    no_new_line = "no_new_line",
+    none = "none",
+}
+export enum e_formatter_standalone_new_line_after_generic {
+    new_line = "new_line",
+    no_new_line = "no_new_line",
+    none = "none",
+}
 export enum e_linter_general_linter_vhdl {
     disabled = "disabled",
     ghdl = "ghdl",
@@ -657,14 +690,22 @@ export function get_default_config(): e_config {
             },
             verible: {
                 path : "",
-                format_args : [],
+                format_args : "",
             },
             standalone: {
                 keyword_case : e_formatter_standalone_keyword_case.lowercase,
                 name_case : e_formatter_standalone_name_case.lowercase,
-                align_comments : false,
                 indentation : "  ",
-                align_generic_port : false,
+                align_port_generic : true,
+                align_comment : false,
+                remove_comments : false,
+                remove_reports : false,
+                check_alias : false,
+                new_line_after_then : e_formatter_standalone_new_line_after_then.new_line,
+                new_line_after_semicolon : e_formatter_standalone_new_line_after_semicolon.new_line,
+                new_line_after_else : e_formatter_standalone_new_line_after_else.new_line,
+                new_line_after_port : e_formatter_standalone_new_line_after_port.new_line,
+                new_line_after_generic : e_formatter_standalone_new_line_after_generic.new_line,
             },
             svg: {
                 configuration : "",

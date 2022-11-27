@@ -20,27 +20,31 @@
 const fs = require("fs");
 const path_lib = require("path");
 import { Base_formatter } from "./base_formatter";
+import * as file_utils from "../utils/file_utils";
 import * as utils from "../process/utils";
 import * as python from "../process/python";
 import * as common from "./common";
+import * as cfg from "../config/config_declaration";
 
 export class S3sv extends Base_formatter {
     constructor() {
         super();
     }
 
-    async format_from_code(code: string, opt: common.s3sv_options): Promise<common.f_result> {
+    public async format_from_code(code: string, opt: cfg.e_formatter_s3sv,
+        python_path: string): Promise<common.f_result> {
         const temp_file = await utils.create_temp_file(code);
-        const formatted_code = await this._format(temp_file, opt);
+        const formatted_code = await this.format(temp_file, opt, python_path);
+        file_utils.remove_file(temp_file);
         return formatted_code;
     }
 
-    async _format(file: string, opt: common.s3sv_options) {
+    public async format(file: string, opt: cfg.e_formatter_s3sv, python_path: string) {
         const python_script = path_lib.join(__dirname, 'bin', 's3sv', 'verilog_beautifier.py');
         //Argument construction from members parameters
         let args = " ";
 
-        args += `-s ${opt.indent_size} `;
+        args += `-s ${opt.indentation_size} `;
         if (opt.use_tabs) {
             args += "--use-tabs ";
         }
@@ -48,12 +52,12 @@ export class S3sv extends Base_formatter {
             args += "--no-oneBindPerLine ";
         }
 
-        if (opt.one_decl_per_line) {
+        if (opt.one_declaration_per_line) {
             args += "--oneDeclPerLine ";
         }
         args += `-i ${file}`;
 
-        const result_p = await python.exec_python_script(opt.python3_path, python_script, args);
+        const result_p = await python.exec_python_script(python_path, python_script, args);
 
         const result_f: common.f_result = {
             code_formatted: "",

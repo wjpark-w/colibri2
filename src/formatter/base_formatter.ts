@@ -18,10 +18,15 @@
 // along with colibri2.  If not, see <https://www.gnu.org/licenses/>.
 
 import * as common from "./common";
+import * as cfg from "../config/config_declaration";
 
 export abstract class Base_formatter {
-    abstract format_from_code(code: string, opt: common.istyle_options |
-        common.standalone_vhdl_options | common.s3sv_options | common.verible_options
+    abstract format_from_code(code: string, opt: cfg.e_formatter_istyle |
+        cfg.e_formatter_standalone | cfg.e_formatter_s3sv | cfg.e_formatter_verible, python_path: string
+    ): Promise<common.f_result>;
+
+    abstract format(file: string, opt: cfg.e_formatter_istyle |
+        cfg.e_formatter_standalone | cfg.e_formatter_s3sv | cfg.e_formatter_verible, python_path: string
     ): Promise<common.f_result>;
 }
 

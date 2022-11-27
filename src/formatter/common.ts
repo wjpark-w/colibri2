@@ -17,6 +17,11 @@
 // You should have received a copy of the GNU General Public License
 // along with colibri2.  If not, see <https://www.gnu.org/licenses/>.
 
+import * as cfg from "../config/config_declaration";
+
+/** Linter name */
+export type t_formatter_name = cfg.e_formatter_general_formatter_vhdl | cfg.e_formatter_general_formatter_verilog;
+
 /** Result type for formatter */
 export type f_result = {
     code_formatted: string;
@@ -24,79 +29,3 @@ export type f_result = {
     successful: boolean;
     message: string;
 };
-
-/** Formatter name */
-export enum FORMATTER_NAME {
-    STANDALONE_VHDL = "standalone_vhdl",
-    ISTYLE = "istyle",
-    S3SV = "s3sv",
-    VERIBLE = "verible"
-}
-
-/** iStyle formatter style */
-export enum istyle_style {
-    ANSI = "ansi",
-    KR = "kr",
-    GNU = "gnu",
-    ONLYINDENT = "onlyindent",
-}
-
-/** iStyle formatter options */
-export type istyle_options = {
-    style: istyle_style,
-    indent_size: number
-};
-
-/** Letter case style */
-export enum LETTER_CASE {
-    LOWERCASE = "lowercase",
-    UPPERCASE = "uppercase"
-}
-
-/** Alignement mode */
-export enum ALIGN_MODE {
-    LOCAL = "local",
-}
-
-/** Standalone VHDL formatter options */
-export type standalone_vhdl_options = {
-    remove_comments: boolean,
-    remove_asserts: boolean,
-    remove_report: boolean,
-    check_alias: boolean,
-    // Check ALIAS (every long name is replaced with ALIAS)
-    align_comments: boolean,
-    sign_align_settings: {
-        is_regional: boolean,
-        is_all: boolean,
-        mode: ALIGN_MODE,
-        // ["FUNCTION", "IMPURE FUNCTION", "GENERIC", "PORT", "PROCEDURE"]
-        keyWords: string[]
-    },
-    keyword_case: LETTER_CASE,
-    type_name_case: LETTER_CASE,
-    indentation: string,
-    new_line_settings: {
-        // [";", "then"]
-        new_line_after: string[],
-        no_new_line_after: string[]
-    },
-    end_of_line: "\n"
-};
-
-/** s3sv formatter options */
-export type s3sv_options = {
-    python3_path: string,
-    use_tabs: boolean,
-    indent_size: number,
-    one_bind_per_line: boolean,
-    one_decl_per_line: boolean
-};
-
-/** Verible formatter options */
-export type verible_options = {
-    path: string,
-    arguments: string,
-};
-
-

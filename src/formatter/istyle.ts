@@ -21,9 +21,11 @@ const fs = require("fs");
 const path_lib = require("path");
 import { Base_formatter } from "./base_formatter";
 import * as utils from "../process/utils";
+import * as file_utils from "../utils/file_utils";
 import { OS } from "../process/common";
 import { Process } from "../process/process";
 import * as common from "./common";
+import * as cfg from "../config/config_declaration";
 
 export class Istyle extends Base_formatter {
     private binary_linux = 'istyle-linux';
@@ -34,9 +36,10 @@ export class Istyle extends Base_formatter {
         super();
     }
 
-    async format_from_code(code: string, opt: common.istyle_options): Promise<common.f_result> {
+    public async format_from_code(code: string, opt: cfg.e_formatter_istyle): Promise<common.f_result> {
         const temp_file = await utils.create_temp_file(code);
         const formatted_code = await this.format(temp_file, opt);
+        file_utils.remove_file(temp_file);
         return formatted_code;
     }
 
@@ -53,16 +56,16 @@ export class Istyle extends Base_formatter {
         }
     }
 
-    private async format(file: string, opt: common.istyle_options) {
+    public async format(file: string, opt: cfg.e_formatter_istyle) {
         const binary_name = this.get_binary();
         const path_bin = path_lib.join(__dirname, 'bin', 'svistyle', binary_name);
 
         let command = "";
-        if (opt.style === common.istyle_style.ONLYINDENT) {
-            command = `${path_bin} --style=ansi -s${opt.indent_size} `;
+        if (opt.style === cfg.e_formatter_istyle_style.indent_only) {
+            command = `${path_bin} --style=ansi -s${opt.indentation_size} `;
         }
         else {
-            command = `${path_bin} --style=${opt.style} -s${opt.indent_size} `;
+            command = `${path_bin} --style=${opt.style} -s${opt.indentation_size} `;
         }
         command += file;
 

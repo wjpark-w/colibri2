@@ -16,7 +16,11 @@
 // You should have received a copy of the GNU General Public License
 // along with colibri2.  If not, see <https://www.gnu.org/licenses/>.
 
-import { get_default_config, e_config, e_tools_general_select_tool, e_linter_general_linter_vhdl, e_linter_general_linter_verilog, e_linter_general_lstyle_vhdl, e_linter_general_lstyle_verilog } from './config_declaration';
+import {
+    get_default_config, e_config, e_tools_general_select_tool, e_linter_general_linter_vhdl,
+    e_linter_general_linter_verilog, e_linter_general_lstyle_vhdl, e_linter_general_lstyle_verilog,
+    e_formatter_general_formatter_vhdl, e_formatter_general_formatter_verilog
+} from './config_declaration';
 import * as cfg_aux from "./auxiliar_config";
 
 export class Config_manager {
@@ -30,6 +34,9 @@ export class Config_manager {
         return this.config;
     }
 
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    // Linter
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     public get_vhdl_linter_name() {
         return this.config.linter.general.linter_vhdl;
     }
@@ -101,6 +108,49 @@ export class Config_manager {
         }
     }
 
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    // Formatter
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    public get_formatter_name_vhdl() {
+        return this.config.formatter.general.formatter_vhdl;
+    }
+
+    public get_formatter_name_verilog() {
+        return this.config.formatter.general.formatter_verilog;
+    }
+
+    public get_formatter_config_vhdl() {
+        const formatter_name = this.get_formatter_name_vhdl();
+        if (formatter_name === e_formatter_general_formatter_vhdl.standalone) {
+            return this.config.formatter.standalone;
+        }
+        else if (formatter_name === e_formatter_general_formatter_vhdl.vsg) {
+            return this.config.formatter.svg;
+        }
+        else {
+            return this.config.formatter.standalone;
+        }
+    }
+
+    public get_formatter_config_verilog() {
+        const formatter_name = this.get_formatter_name_verilog();
+        if (formatter_name === e_formatter_general_formatter_verilog.istyle) {
+            return this.config.formatter.istyle;
+        }
+        else if (formatter_name === e_formatter_general_formatter_verilog.s3sv) {
+            return this.config.formatter.s3sv;
+        }
+        else if (formatter_name === e_formatter_general_formatter_verilog.verible) {
+            return this.config.formatter.verible;
+        }
+        else {
+            return this.config.formatter.istyle;
+        }
+    }
+
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    // Exec
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     public get_exec_config(): cfg_aux.t_exec_config {
         const exec_config: cfg_aux.t_exec_config = {
             execution_mode: this.config.tools.general.execution_mode,
@@ -111,6 +161,9 @@ export class Config_manager {
         return exec_config;
     }
 
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    // Template
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     public get_template_config(): cfg_aux.t_template_options {
         const options: cfg_aux.t_template_options = {
             header_file_path: this.config.templates.general.header_file_path,
@@ -121,6 +174,9 @@ export class Config_manager {
         return options;
     }
 
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    // Documenter
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     public get_documenter_config(): cfg_aux.t_documenter_options {
         const options: cfg_aux.t_documenter_options = {
             generic_visibility: this.config.documentation.general.generics,
@@ -139,6 +195,9 @@ export class Config_manager {
         return options;
     }
 
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    // Tools
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     public get_tool_options(): cfg_aux.t_tool_options {
         const tool_name = this.config.tools.general.select_tool;
         const tool_config = this.config.tools[tool_name];

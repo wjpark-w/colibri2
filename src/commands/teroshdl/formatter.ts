@@ -23,10 +23,39 @@ import * as printer from '../../utils/printer';
 import * as formatter_common from '../../formatter/common';
 import { Formatter } from '../../formatter/formatter';
 import * as logger from '../../logger/logger';
+import * as cfg from '../../config/config_declaration';
 
 function get_formatters(): string[] {
-    const key_list = Object.values(formatter_common.FORMATTER_NAME);
+    const key_list = [
+        cfg.e_formatter_general_formatter_vhdl.standalone,
+        cfg.e_formatter_general_formatter_vhdl.vsg,
+        cfg.e_formatter_general_formatter_verilog.istyle,
+        cfg.e_formatter_general_formatter_verilog.s3sv,
+        cfg.e_formatter_general_formatter_verilog.verible,
+    ];
     return key_list;
+}
+
+function get_formatter_name(name_str: string): formatter_common.t_formatter_name {
+    if (name_str === cfg.e_formatter_general_formatter_vhdl.standalone) {
+        return cfg.e_formatter_general_formatter_vhdl.standalone;
+    }
+    else if (name_str === cfg.e_formatter_general_formatter_vhdl.vsg) {
+        return cfg.e_formatter_general_formatter_vhdl.vsg;
+    }
+
+    else if (name_str === cfg.e_formatter_general_formatter_verilog.istyle) {
+        return cfg.e_formatter_general_formatter_verilog.istyle;
+    }
+    else if (name_str === cfg.e_formatter_general_formatter_verilog.s3sv) {
+        return cfg.e_formatter_general_formatter_verilog.s3sv;
+    }
+    else if (name_str === cfg.e_formatter_general_formatter_verilog.verible) {
+        return cfg.e_formatter_general_formatter_verilog.verible;
+    }
+    else {
+        return cfg.e_formatter_general_formatter_vhdl.standalone;
+    }
 }
 
 type i_result = {
@@ -53,67 +82,59 @@ function print_report(error_list: i_result[]) {
     printer.print_table(title, column_title, column_color, row_list);
 }
 
-function get_standalone_vhdl_options(_config_path: string) {
-    const config: formatter_common.standalone_vhdl_options = {
+function get_standalone_vhdl_options(_config_path: string): cfg.e_formatter_standalone {
+    const config: cfg.e_formatter_standalone = {
+        keyword_case: cfg.e_formatter_standalone_keyword_case.lowercase,
+        name_case: cfg.e_formatter_standalone_name_case.lowercase,
+        indentation: '',
+        align_port_generic: false,
+        align_comment: false,
         remove_comments: false,
-        remove_asserts: false,
-        remove_report: false,
+        remove_reports: false,
         check_alias: false,
-        align_comments: false,
-        sign_align_settings: {
-            is_regional: false,
-            is_all: false,
-            mode: formatter_common.ALIGN_MODE.LOCAL,
-            keyWords: []
-        },
-        keyword_case: formatter_common.LETTER_CASE.LOWERCASE,
-        type_name_case: formatter_common.LETTER_CASE.LOWERCASE,
-        indentation: '  ',
-        new_line_settings: {
-            new_line_after: [],
-            no_new_line_after: []
-        },
-        end_of_line: '\n'
+        new_line_after_then: cfg.e_formatter_standalone_new_line_after_then.new_line,
+        new_line_after_semicolon: cfg.e_formatter_standalone_new_line_after_semicolon.new_line,
+        new_line_after_else: cfg.e_formatter_standalone_new_line_after_else.new_line,
+        new_line_after_port: cfg.e_formatter_standalone_new_line_after_port.new_line,
+        new_line_after_generic: cfg.e_formatter_standalone_new_line_after_generic.new_line
     }
     return config;
 }
 
-function get_istyle_options(_config_path: string) {
-    const config: formatter_common.istyle_options = {
-        style: formatter_common.istyle_style.ANSI,
-        indent_size: 2
+function get_istyle_options(_config_path: string): cfg.e_formatter_istyle {
+    const config: cfg.e_formatter_istyle = {
+        style: cfg.e_formatter_istyle_style.ansi,
+        indentation_size: 2
     };
     return config;
 }
 
-function get_s3sv_options(_config_path: string, python_path: string) {
-    const config: formatter_common.s3sv_options = {
-        python3_path: python_path,
-        use_tabs: false,
-        indent_size: 2,
+function get_s3sv_options(_config_path: string, _python_path: string): cfg.e_formatter_s3sv {
+    const config: cfg.e_formatter_s3sv = {
         one_bind_per_line: false,
-        one_decl_per_line: false
-    }
+        one_declaration_per_line: false,
+        use_tabs: false,
+        indentation_size: 2
+    };
     return config;
 }
 
-
 function get_verible_options(_config_path: string) {
-    const config: formatter_common.verible_options = {
+    const config: cfg.e_formatter_verible = {
         path: '',
-        arguments: ''
-    }
+        format_args: ""
+    };
     return config;
 }
 
 function get_options(formatter_name: string, config_path: string, python_path: string) {
-    if (formatter_name === formatter_common.FORMATTER_NAME.ISTYLE) {
+    if (formatter_name === cfg.e_formatter_general_formatter_verilog.istyle) {
         return get_istyle_options(config_path);
     }
-    else if (formatter_name === formatter_common.FORMATTER_NAME.S3SV) {
+    else if (formatter_name === cfg.e_formatter_general_formatter_verilog.s3sv) {
         return get_s3sv_options(config_path, python_path);
     }
-    else if (formatter_name === formatter_common.FORMATTER_NAME.STANDALONE_VHDL) {
+    else if (formatter_name === cfg.e_formatter_general_formatter_vhdl.standalone) {
         return get_standalone_vhdl_options(config_path);
     }
     else {
@@ -202,7 +223,7 @@ export default class MyCLI extends Command {
         //Input
         const hdl_file_list = await command_utils.get_files_from_input(input_path, cmd_current_dir);
 
-        const formatter_manager = new Formatter(formatter_name);
+        const formatter_manager = new Formatter();
         const formatter_options = get_options(formatter_name, "", python_path);
 
         const result_list: any[] = [];
@@ -211,7 +232,8 @@ export default class MyCLI extends Command {
             const filename = hdl_file.filename;
             const current_code = file_utils.read_file_sync(filename);
             const formatted_code =
-                (await formatter_manager.format_from_code(current_code, formatter_options)).code_formatted;
+                (await formatter_manager.format_from_code(get_formatter_name(formatter_name), current_code,
+                    formatter_options, python_path)).code_formatted;
             let error = false;
             if (current_code !== formatted_code) {
                 error = true;
